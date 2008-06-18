@@ -19,7 +19,7 @@
 	   Set the properties related to the fatjar
 	 ========================================================================
 	-->
-	<property name="fjepPath" value="lib/fatjar_0.0.25/fatjar.jar" />
+	<property name="fjepPath" value="lib/fatjar.jar" />
 	<taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" />
 	<typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" />
 	<typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" />
