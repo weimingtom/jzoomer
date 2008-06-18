@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Mon Jun 16 16:18:38 CST 2008
+#Wed Jun 18 19:24:38 CST 2008
 onejar.license.required=true
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
-jarname=package\\jZoomer_1.01\\jZoomer v1.01.jar
+jarname=package\\jZoomer_1.1\\jZoomer v1.1.jar
 manifest.mergeall=true
 manifest.mainclass=com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow
 manifest.file=<createnew>
