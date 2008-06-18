@@ -13,10 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseWheelListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
@@ -33,7 +31,6 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	private int zoomType;
 	private int zoomRate;
 
-	// private Canvas canvas;
 	private Composite container;
 	private Robot robot;
 	private BufferedImage bi;
@@ -48,7 +45,6 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	{
 
 		this.window = w;
-		// this.canvas = window.getCanvas();
 		this.container = window.getContainer();
 		this.zoomType = type;
 		this.imagScaleType = JZoomerConstant.IMAGE_SCALE_TYPE;
@@ -105,29 +101,41 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 
 	private void doZoomIn()
 	{
-
-		if( zoomRate > JZoomerConstant.ZOOM_RATE_MIN )
-		{
-			zoomRate--;
-			if( zoomRate == 0 || zoomRate == -1 )
-			{// skip rate = 0 or rate = -1
-				zoomRate = -2;
+		if( window.getTimer().isRunning() )
+		{//process dynamic image
+			if( zoomRate > JZoomerConstant.ZOOM_RATE_MIN )
+			{
+				zoomRate--;
+				if( zoomRate == 0 || zoomRate == -1 )
+				{// skip rate = 0 or rate = -1
+					zoomRate = -2;
+				}
+				window.setCurrentZoomRate( zoomRate );
 			}
-			window.setCurrentZoomRate( zoomRate );
+		}
+		else
+		{//TODO process currentImage
+			
 		}
 	}
 
 	private void doZoomOut()
 	{
-
-		if( zoomRate < JZoomerConstant.ZOOM_RATE_MAX )
-		{
-			zoomRate++;
-			if( zoomRate == 0 || zoomRate == -1 )
-			{// skip rate = 0 or rate = -1
-				zoomRate = 1;
+		if( window.getTimer().isRunning() )
+		{//process dynamic image
+			if( zoomRate < JZoomerConstant.ZOOM_RATE_MAX )
+			{
+				zoomRate++;
+				if( zoomRate == 0 || zoomRate == -1 )
+				{// skip rate = 0 or rate = -1
+					zoomRate = 1;
+				}
+				window.setCurrentZoomRate( zoomRate );
 			}
-			window.setCurrentZoomRate( zoomRate );
+		}
+		else
+		{//TODO process currentImage
+			
 		}
 	}
 
@@ -154,7 +162,6 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 				Rectangle sampleRectangle = new Rectangle( mouseX - ( captureWidth / 2 ),
 						mouseY - ( captureHeight / 2 ), captureWidth, captureHeight );
 
-				
 				bi = robot.createScreenCapture( sampleRectangle );
 				if( rate == 1 || rate == -1 )
 				{
@@ -165,24 +172,6 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 				}
 				imgData = ImageConvertor.getImageData( bi );
 
-				// mouseLocationLb.setText( "(" + mouseX + "," + mouseY + ")" );
-
-				// 动态颜色信息显示
-				// redNumberLb.setText( "" + color.getRed() );
-				// greenNumberLb.setText( "" + color.getGreen() );
-				// blueNumberLb.setText( "" + color.getBlue() );
-
-				// 动态颜色长度显示
-				// redColorLb.setSize( color.getRed()/6, 10 );
-				// greenColorLb.setSize( color.getGreen()/6, 10 );
-				// blueColorLb.setSize( color.getBlue()/6, 10 );
-
-				// 动态HTML代码显示
-				// htmlLb.setText( getColorHtml( color ) );
-				// colorLb.setBackground( SWTResourceManager.getColor(
-				// color.getRed(),color.getGreen(),color.getBlue() ) );
-
-				// 捕捉鼠标附近100*100象素大小范围的图像
 				if( captureImg != null )
 				{
 					captureImg.dispose();
