@@ -2,21 +2,184 @@
 <project name="jZoomer" default="package" basedir=".">
 
 	<!--
+	 ========================================================================
+	   Set the properties related to the project.
+	 ========================================================================
+	-->
+	<property name="project.name" value="jZoomer" />
+	<property name="project.version" value="Vtest" />
+	<property name="project.mainclass" value="com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow" />
+	<property name="project.encoding" value="utf-8" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.5" />
+	<property name="source" value="1.5" />
+
+	<!--
+	 ========================================================================
+	   Set the properties related to the fatjar
+	 ========================================================================
+	-->
+	<property name="fjepPath" value="lib/fatjar.jar" />
+	<taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" />
+	<typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" />
+	<typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" />
+	<typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}" />
+	<typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}" />
+	
+	<!--
      ========================================================================
        Set the properties related to the source tree.
      ========================================================================
   	-->
 	<property name="src.dir" location="src/" />
+	<property name="src.java.dir" location="src/java" />
 	<property name="src.res.dir" location="src/res" />
 	<property name="src.test.dir" location="test/java" />
 	<property name="src.test.res.dir" location="test/res" />
-	<property name="lib.dir" location="lib" />
+	<property name="lib.dir" location="lib/" />
+	<property name="doc.dir" location="doc/" />
+	<property name="conf.dir" location="conf/" />
+	<property name="log.dir" location="log/" />
+
+
+	<!--
+     ========================================================================
+       Set the properties related to the target area
+     ========================================================================
+  	-->
+
+	<!-- Destination locations for the build -->
+	<property name="target.dir" location="out" />
+	<property name="target.classes.dir" location="${target.dir}/classes" />
+	<property name="target.test.dir" location="${target.dir}" />
+	<property name="target.test.classes.dir" location="${target.test.dir}/classes" />
+	<property name="target.test.data.dir" location="${target.test.dir}/data" />
+	<property name="target.test.reports.dir" location="${target.test.dir}/reports" />
+
+	<!-- Libraries required for the sample project -->
+
+	<path id="compile.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Destination locations for the package -->
+	<property name="package.dir" location="package/${project.name}_${project.version}" />
+	<property name="package.src.dir" location="${package.dir}/src" />
+	<property name="package.conf.dir" location="${package.dir}/conf" />
+	<property name="package.doc.dir" location="${package.dir}/doc" />
+	<property name="package.log.dir" location="${package.dir}/log" />
 	
-	<property name="debuglevel" value="source,lines,vars"/>
-	<property name="target" value="1.5"/>
-	<property name="source" value="1.5"/>
-	
-	<property name="package">
-	</property>
-	
+	<property name="package.src.zip.filename" value="${package.dir}/${project.name}_src_${project.version}.zip" />
+	<property name="package.jar.filename" value="${package.dir}/${project.name}_${project.version}.jar" />
+	<property name="package.filename" value="package/${project.name}_${project.version}_all.zip" />
+
+	<!--
+     ========================================================================
+       Initialize the build. Must be called by all targets
+     ========================================================================
+  	-->
+	<target name="init">
+
+	</target>
+
+	<!--
+	 =======================================================================
+       Clean build directory
+     ========================================================================
+ 	-->
+	<target name="clean" description="Clean all generated files">
+		<delete dir="${target.dir}"  />
+	</target>
+
+	<!--
+	 ========================================================================
+	   Compile Java Classes
+	 ========================================================================
+	-->
+	<target name="compile.java" depends="init">
+
+		<mkdir dir="${target.classes.dir}" />
+		<copy includeemptydirs="false" todir="${target.classes.dir}">
+			<fileset dir="${src.java.dir}" excludes="**/*.launch, **/*.java, **/*.svn" />
+		</copy>
+		<copy includeemptydirs="false" todir="${target.classes.dir}">
+			<fileset dir="${src.res.dir}" excludes="**/*.launch, **/*.java, **/*.svn" />
+		</copy>
+		<copy includeemptydirs="false" todir="${target.classes.dir}">
+			<fileset dir="${src.test.dir}" excludes="**/*.launch, **/*.java, **/*.svn" />
+		</copy>
+		<copy includeemptydirs="false" todir="${target.classes.dir}">
+			<fileset dir="${src.test.res.dir}" excludes="**/*.launch, **/*.java, **/*.svn" />
+		</copy>
+
+		<javac debug="true" debuglevel="${debuglevel}" encoding="${project.encoding}" destdir="${target.classes.dir}" source="${source}" target="${target}">
+			<src path="${src.java.dir}" />
+			<classpath refid="compile.classpath" />
+		</javac>
+		<javac debug="true" debuglevel="${debuglevel}" encoding="${project.encoding}" destdir="${target.classes.dir}" source="${source}" target="${target}">
+			<src path="${src.res.dir}" />
+			<classpath refid="compile.classpath" />
+		</javac>
+
+	</target>
+
+	<!--
+     ========================================================================
+	   Build runnable jar by fatjar
+     ========================================================================
+	-->
+	<target name="compile.fatjar" depends="compile.java">
+		<mkdir dir="${package.dir}" />
+		<fatjar.build output="${package.jar.filename}">
+			<fatjar.manifest mainclass="com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow" />
+			<fatjar.filesource path="out/classes" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.osgi_3.3.1.R33x_v20070828.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.ui.forms_3.3.0.v20070511.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.core.commands_3.3.0.I20070605-0010.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.equinox.common_3.3.0.v20070426.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.core.runtime_3.3.100.v20070530.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.swt.win32.win32.x86_3.3.1.v3346i.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.jface_3.3.1.M20070910-0800b.jar" relpath="" />
+			<fatjar.jarsource file="lib/org.eclipse.jface.text_3.3.1.r331_v20070629.jar" relpath="" />
+		</fatjar.build>
+	</target>
+
+	<!--
+     ========================================================================
+       Package the sources
+     ========================================================================
+  	-->
+	<!-- Package the system sources -->
+	<target name="package" depends="init, compile.fatjar">
+		<mkdir dir="${package.dir}" />
+		<copy todir="${package.conf.dir}">
+			<fileset dir="${conf.dir}">
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${package.log.dir}">
+			<fileset dir="${log.dir}">
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${package.doc.dir}">
+			<fileset dir="${doc.dir}">
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+		<copy todir="${package.src.dir}">
+			<fileset dir="${src.dir}">
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+		<zip destfile="${package.src.zip.filename}" >
+			<fileset dir="${package.src.dir}"></fileset>
+		</zip>
+		<delete dir="${package.src.dir}"  />
+		<zip destfile="${package.filename}">
+			<fileset dir="${package.dir}"></fileset>
+		</zip>
+	</target>
 </project>
