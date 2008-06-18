@@ -10,6 +10,9 @@ import java.awt.MouseInfo;
 import java.awt.Robot;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -17,6 +20,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
@@ -25,17 +29,20 @@ import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
 
-public class ColorAction extends BasicAction implements MouseListener, MouseMoveListener, KeyListener
+public class ColorAction extends BasicAction implements MouseListener, MouseMoveListener// ,
+																						// KeyListener
 {
 	private static final String Control = null;
 	private JZoomerWindow window;
 	private Canvas canvas;
 	private Robot robot;
 	private int r, g, b;
-	private Color color;
-	private boolean isHotKeyPressed;
+	private boolean isHotKeyPressed, isStopped;;
 	private ColorInfoGroup colorInfoGroup;
 
+	private static Clipboard clipboard = new Clipboard( Display.getCurrent() );
+	private static TextTransfer text_transfer = TextTransfer.getInstance();
+	
 	public ColorAction( JZoomerWindow w )
 	{
 
@@ -49,9 +56,10 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		{
 			e.printStackTrace();
 		}
+		setChecked( false );
 		setText( getMessage( "action.color.text" ) );
 		setToolTipText( getMessage( "action.color.tooltip" ) );
-		setImageDescriptor( ResourceManager.getImageDescriptor( ColorAction.class, "/icons/colorpicker.gif" ) );
+		setImageDescriptor( ResourceManager.getImageDescriptor( ColorAction.class, "/icons/colorpicker.png" ) );
 	}
 
 	public void run()
@@ -60,69 +68,85 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		if( isChecked() )
 		{
 			canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
+			canvas.setToolTipText( getMessage( "action.color.canvas.tooltip" ) );
 			toggleColorPick( true );
 		} else
 		{
 			canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
+			canvas.setToolTipText( "" );
 			toggleColorPick( false );
 		}
 	}
 
-	private void pickupColor( MouseEvent e )
+	private void pickupColor()
 	{
 
 		System.out.println( "pick up color" );
-
+		Color color = getCurrentMouseLocationColor();
+		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
+		//TODO save color info into clip
+		String cHtml = getColorHtml();
+		
+		clipboard.setContents( new Object[]{ cHtml }, new Transfer[]{ text_transfer } );
+		
+	}
+	
+	public String getColorHtml()
+	{
+		return colorInfoGroup.getColorHtml();
 	}
 
-	private void showColorInfo( MouseEvent e )
+	private Color getCurrentMouseLocationColor()
 	{
 
-		System.out.println( "show color info" );
 		int mouseX = MouseInfo.getPointerInfo().getLocation().x;
 		int mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
-		color = robot.getPixelColor( mouseX, mouseY );
+		return robot.getPixelColor( mouseX, mouseY );
+	}
+
+	private void showColorInfo()
+	{
+
+		System.out.println( "show color info" );
+		if( isStopped ) return;
+		Color color = getCurrentMouseLocationColor();
 		r = color.getRed();
 		g = color.getGreen();
 		b = color.getBlue();
 
-		//colorInfoLb.setSize( 30, 30 );
-		//colorInfoLb.setBackground( SWTResourceManager.getColor( r, g, b ) );
-		//colorInfoLb.setLocation( getMouseLocationInParent( e ).x + 4 , getMouseLocationInParent( e ).y + 4 );
-		
 		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( r, g, b ) );
-		colorInfoGroup.setLocation( getMouseLocationInParent( e ).x + 4 , getMouseLocationInParent( e ).y + 4);
-		
-		//colorInfoLb.setVisible( true );
-		
 	}
 
 	public void mouseDoubleClick( MouseEvent e )
 	{
 
+		// pickup color immediately
+		pickupColor();
 	}
 	public void mouseUp( MouseEvent e )
 	{
-
-		colorInfoGroup.setVisible( false );
+		//toggle stop/start show color info
+		isStopped = !isStopped;
 	}
 
 	public void mouseDown( MouseEvent e )
 	{
 
-		if( e.stateMask == ( SWT.BUTTON1 | 'c')||e.stateMask == ( SWT.BUTTON1 | 'C' ) )
-		{
-			pickupColor( e );
-		}
+		// if( e.stateMask == ( SWT.BUTTON1 | 'c')||e.stateMask == ( SWT.BUTTON1 | 'C' ) )
+		// {
+		// pickupColor( e );
+		// }
+		
 	}
 
 	public void mouseMove( MouseEvent e )
 	{
-		//System.out.println( e.stateMask );
+
+		// System.out.println( e.stateMask );
 		if( isHotKeyPressed )
 		{
-			showColorInfo( e );
+			showColorInfo();
 		}
 
 	}
@@ -130,31 +154,31 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	public void keyPressed( KeyEvent e )
 	{
 
-		if( e.keyCode == 'c' || e.keyCode == 'C' )
-		{
-			System.out.println( "c pressed" );
-			canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
-			toggleColorPick( true );
-		}
+		// if( e.keyCode == 'c' || e.keyCode == 'C' )
+		// {
+		// System.out.println( "c pressed" );
+		// canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
+		// toggleColorPick( true );
+		// }
 	}
-
 
 	private void toggleColorPick( boolean flag )
 	{
+
 		isHotKeyPressed = flag;
-		//colorInfoLb.setVisible( flag );
+		isStopped = !flag;
 		colorInfoGroup.setVisible( flag );
 	}
-	
+
 	public void keyReleased( KeyEvent e )
 	{
 
-		if( e.keyCode == 'c' || e.keyCode == 'C' )
-		{
-			System.out.println( "c released" );
-			canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
-			toggleColorPick( false );
-		}
+		// if( e.keyCode == 'c' || e.keyCode == 'C' )
+		// {
+		// System.out.println( "c released" );
+		// canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
+		// toggleColorPick( false );
+		// }
 	}
 
 	/**
@@ -167,8 +191,9 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		this.canvas = canvas;
 	}
 
-	public void setcColorInfoGroup( ColorInfoGroup colorInfoGroup )
+	public void setColorInfoGroup( ColorInfoGroup colorInfoGroup )
 	{
-		this.colorInfoGroup = colorInfoGroup;		
+
+		this.colorInfoGroup = colorInfoGroup;
 	}
 }

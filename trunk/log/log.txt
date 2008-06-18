@@ -2,6 +2,7 @@
 1.	Bux修正：
 	·修正工程中加载lib路径不正确的bug
 	·修正鼠标滚轮在停止取图监视时使用上的Bug
+	·修正鼠标进入窗口后，还可以开启监视的Bug
 2.	功能添加：
 3.	核心调整：
 	·在Google Code上添加了SVN地址用于维护，地址为：https://jzoomer.googlecode.com/svn/trunk/

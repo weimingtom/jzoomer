@@ -1,7 +1,5 @@
 package com.dextrys.trilogy.toolkit.jzoomer.logic.action;
 
-import java.awt.Canvas;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -10,8 +8,6 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
@@ -60,6 +56,7 @@ public class ToggleMonitorAction extends BasicAction implements MouseTrackListen
 		{
 			System.out.println( "mouse enter toggle off" );
 			window.toggleMonitor( false );
+			setEnabled( false );
 		}
 	}
 
@@ -79,6 +76,7 @@ public class ToggleMonitorAction extends BasicAction implements MouseTrackListen
 			compositeSize = c.getParent().getSize();
 			currentMousePoint = new Point( c.getLocation().x + e.x, c.getLocation().y + e.y );
 		}
+		
 		if( currentMousePoint.x > 0 && currentMousePoint.y > 0 && currentMousePoint.x < compositeSize.x && currentMousePoint.y < compositeSize.y )
 		{// mouse move in the composite
 			System.out.println( "mouse are move in the composite" );
@@ -91,6 +89,7 @@ public class ToggleMonitorAction extends BasicAction implements MouseTrackListen
 		{// start minitor
 			window.toggleMonitor( true );
 		}
+		setEnabled( true );
 	}
 
 	public void mouseMove( MouseEvent e )
