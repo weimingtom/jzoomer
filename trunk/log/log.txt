@@ -4,10 +4,20 @@
 	·修正鼠标滚轮在停止取图监视时使用上的Bug
 	·修正鼠标进入窗口后，还可以开启监视的Bug
 2.	功能添加：
+	·添加色彩信息面板
+	·实现取色功能，用Ctrl+C开启，双击可以直接取色至剪贴板，单击暂停/开始取色
 3.	核心调整：
 	·在Google Code上添加了SVN地址用于维护，地址为：https://jzoomer.googlecode.com/svn/trunk/
-	·重构鼠标拖拽Widget和面板的方法
+	·重构鼠标拖拽Widget和面板的方法，增强其扩展性
+	·添加ColorInfoPanel用于显示和拾取颜色
+	·在ColorAction添加ColorInfoPanel相关的资源、逻辑和方法
+	·添加TrackerAction用以实现对图片大小的测量（未实现）
 4.	版本变更：
+	版本升级为1.1
+5.	待做事项：
+	·停止监控时图片的缩放
+	·对图片大小的测量(width=xxxpx,height=xxxpx)
+	·色彩信息面板样式的美化
 
 20080617
 1.	Bug修正：

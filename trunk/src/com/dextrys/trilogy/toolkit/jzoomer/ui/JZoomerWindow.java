@@ -165,6 +165,9 @@ public class JZoomerWindow extends BasicWindow implements Listener
 
 		colorInfoGroup = new ColorInfoGroup(container, SWT.NONE);
 		colorInfoGroup.setVisible( false );
+		// implement mouse drag
+		colorInfoGroup.addMouseMoveListener( this );
+		colorInfoGroup.addMouseListener( this );
 		
 		canvas = new Canvas( container, SWT.NONE );
 		canvas.setVisible( false );
@@ -254,7 +257,6 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			//show colorInfo panel
 			colorAction.setChecked( true );
 			colorAction.run();
-			
 			// TODO zoom currentImage in future
 			zoomInAction.setEnabled( false );
 			zoomOutAction.setEnabled( false );
