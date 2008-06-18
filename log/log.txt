@@ -1,3 +1,10 @@
+20080618
+1.	Bux修正：
+2.	功能添加：
+3.	核心调整：
+	·在Google Code上添加了SVN地址用于维护，地址为：http://jzoomer.googlecode.com/svn/trunk/
+4.	版本变更：
+
 20080617
 1.	Bug修正：
 	·修正进出窗口时会报异常的Bug
@@ -11,8 +18,9 @@
 	·添加canvas用于对静止截图的处理
 	·添加Tracker用于测量
 	·添加Label用于信息提示
-	·添加ColorAction,ScaleAction用于对静止截图的处理
+	·添加ColorAction用于对静止截图的处理
 4.	版本变更：
+	版本升级为1.03
 
 20080616 2nd
 1.	Bug修正：
@@ -22,6 +30,7 @@
 3.	核心调整：
 	·去掉canvas，直接将采样图片放于container上，便于以后进一步在container上添加组件及操作
 4.	版本变更:
+	·版本升级为1.02
 
 20080616
 1.	Bug修正：
