@@ -18,6 +18,7 @@
 	·停止监控时图片的缩放
 	·对图片大小的测量(width=xxxpx,height=xxxpx)
 	·色彩信息面板样式的美化
+	·build.xml文件
 
 20080617
 1.	Bug修正：
