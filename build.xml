@@ -1,35 +1,22 @@
 <?xml version="1.0"?>
-<project name="FatJar jZoomer v1.0.jar (experimental)" default="main" basedir=".">
-    <!-- this file was created by Fat-Jar Eclipse Plug-in -->
-    <!-- the ANT-Export is in a very early stage, so this -->
-    <!-- is only experimental, ANT 1.6 or above is        -->
-    <!-- required, feedback is always welcome:            -->
-    <!--       http://sourceforge.net/projects/fjep       -->
-    <!-- uncomment the following lines if using ANT outside Eclipse -->
-    <!--
-        <property name="fjepPath" value="plugins/net.sf.fjep.fatjar_0.0.25/fatjar.jar"/>
-        <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
-        <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}"/>
-    -->
-    <!-- uncomment the above lines to use ANT outside of Eclipse -->
-    <target name="main">
-        <fatjar.build output="jZoomer v1.0.jar">
-            <fatjar.manifest mainclass="com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow"/>
-            <fatjar.filesource path="D:\java\myjavafile\jZoomer\out\classes" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.osgi_3.3.1.R33x_v20070828.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.ui.forms_3.3.0.v20070511.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.core.commands_3.3.0.I20070605-0010.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.equinox.common_3.3.0.v20070426.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.equinox.registry_3.3.1.R33x_v20070802.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.core.runtime_3.3.100.v20070530.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.text_3.3.0.v20070606-0010.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.swt.win32.win32.x86_3.3.1.v3346i.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.jface_3.3.1.M20070910-0800b.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.jface.text_3.3.1.r331_v20070629.jar" relpath=""/>
-            <fatjar.jarsource file="D:\software\eclipse\plugins\org.eclipse.ui.workbench_3.3.1.M20070921-1200.jar" relpath=""/>
-        </fatjar.build>
-    </target>
+<project name="jZoomer" default="package" basedir=".">
+
+	<!--
+     ========================================================================
+       Set the properties related to the source tree.
+     ========================================================================
+  	-->
+	<property name="src.dir" location="src/" />
+	<property name="src.res.dir" location="src/res" />
+	<property name="src.test.dir" location="test/java" />
+	<property name="src.test.res.dir" location="test/res" />
+	<property name="lib.dir" location="lib" />
+	
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.5"/>
+	<property name="source" value="1.5"/>
+	
+	<property name="package">
+	</property>
+	
 </project>
