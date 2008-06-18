@@ -7,7 +7,7 @@
 	 ========================================================================
 	-->
 	<property name="project.name" value="jZoomer" />
-	<property name="project.version" value="Vtest" />
+	<property name="project.version" value="test" />
 	<property name="project.mainclass" value="com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow" />
 	<property name="project.encoding" value="utf-8" />
 	<property name="debuglevel" value="source,lines,vars" />
@@ -19,7 +19,7 @@
 	   Set the properties related to the fatjar
 	 ========================================================================
 	-->
-	<property name="fjepPath" value="lib/fatjar.jar" />
+	<property name="fjepPath" value="lib/fatjar_0.0.25/fatjar.jar" />
 	<taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" />
 	<typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" />
 	<typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" />
