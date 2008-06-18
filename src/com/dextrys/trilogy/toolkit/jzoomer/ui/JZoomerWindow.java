@@ -4,17 +4,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -23,12 +17,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
@@ -162,7 +153,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			}
 
 		} );
-
+		
 		// getShell().getMenuBar().addMenuListener( toggleMonitorAction );
 		// tracker = new Tracker( getShell().getDisplay(), SWT.RESIZE );
 		tracker = new Tracker( container, SWT.RESIZE );
@@ -187,13 +178,13 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		canvas.addMouseTrackListener( toggleMonitorAction );
 		// implement color pick-up
 		canvas.addMouseListener( colorAction );
-		canvas.addKeyListener( colorAction );
+		//canvas.addKeyListener( colorAction );
 		canvas.addMouseMoveListener( colorAction );
 		
 		
 		
 		colorAction.setCanvas( canvas );
-		colorAction.setcColorInfoGroup( colorInfoGroup );
+		colorAction.setColorInfoGroup( colorInfoGroup );
 
 		return container;
 	}
@@ -241,10 +232,13 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			System.out.println( "invoke toggle on " );
 			// Convert capture Image from canvas backgroundImage to container backgroundImage
 			canvas.setVisible( false );
-			// TODO zoom currentImage in future
 			zoomInAction.setEnabled( true );
 			zoomOutAction.setEnabled( true );
+			//hidden colorInfo panel
+			colorAction.setChecked( false );
+			colorAction.run();
 			timer.start();
+			// TODO zoom currentImage in future
 		} else
 		{
 			System.out.println( "invoke toggle off" );
@@ -257,7 +251,10 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			canvas.setSize( container.getSize() );
 			canvas.setLocation( 0, 0 );
 			canvas.setVisible( true );
-
+			//show colorInfo panel
+			colorAction.setChecked( true );
+			colorAction.run();
+			
 			// TODO zoom currentImage in future
 			zoomInAction.setEnabled( false );
 			zoomOutAction.setEnabled( false );

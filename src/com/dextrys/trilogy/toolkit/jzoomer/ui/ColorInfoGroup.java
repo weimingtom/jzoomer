@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicComposite;
 import com.swtdesigner.SWTResourceManager;
 
@@ -26,31 +27,28 @@ import com.swtdesigner.SWTResourceManager;
  */
 public class ColorInfoGroup extends BasicComposite
 {
-	private Label htmlLb;
 	private Label colorLb;
 	private Label blueColorLb;
 	private Label greenColorLb;
 	private Label redColorLb;
-	private Label blueNumberLb;
-	private Label greenNumberLb;
-	private Label redNumberLb;
+	private Text htmlText, redNumberText, greenNumberText, blueNumberText;
 
 	public ColorInfoGroup( Composite parent, int style )
 	{
 
 		super( parent, style );
 
-		redNumberLb = new Label( this, SWT.CENTER );
-		redNumberLb.setBounds( 5, 15, 32, 13 );
-		redNumberLb.setToolTipText( getMessage( "window.colorGroup.tooltip.red" ) );
+		redNumberText = new Text( this, SWT.CENTER );
+		redNumberText.setBounds( 5, 15, 32, 13 );
+		redNumberText.setToolTipText( getMessage( "window.colorGroup.tooltip.red" ) );
 
-		greenNumberLb = new Label( this, SWT.CENTER );
-		greenNumberLb.setBounds( 5, 30, 32, 13 );
-		greenNumberLb.setToolTipText( getMessage( "window.colorGroup.tooltip.green" ) );
+		greenNumberText = new Text( this, SWT.CENTER );
+		greenNumberText.setBounds( 5, 30, 32, 13 );
+		greenNumberText.setToolTipText( getMessage( "window.colorGroup.tooltip.green" ) );
 
-		blueNumberLb = new Label( this, SWT.CENTER );
-		blueNumberLb.setBounds( 5, 45, 32, 13 );
-		blueNumberLb.setToolTipText( getMessage( "window.colorGroup.tooltip.blue" ) );
+		blueNumberText = new Text( this, SWT.CENTER );
+		blueNumberText.setBounds( 5, 45, 32, 13 );
+		blueNumberText.setToolTipText( getMessage( "window.colorGroup.tooltip.blue" ) );
 
 		redColorLb = new Label( this, SWT.NONE );
 		redColorLb.setBackground( Display.getCurrent().getSystemColor(SWT.COLOR_RED) );
@@ -68,41 +66,41 @@ public class ColorInfoGroup extends BasicComposite
 		blueColorLb.setText( "" );
 
 		colorLb = new Label( this, SWT.CENTER | SWT.BORDER );
-		colorLb.setBounds( 15, 64, 17, 16 );
+		colorLb.setBounds( 10, 64, 20, 15 );
 		colorLb.setToolTipText( "" );
 		colorLb.setBackground( SWTResourceManager.getColor( 128, 128, 128 ) );
 		colorLb.setToolTipText( getMessage( "window.colorGroup.tooltip.color" ) );
 
-		htmlLb = new Label( this, SWT.NONE );
-		htmlLb.setBounds( 35, 64, 50, 15 );
-		htmlLb.setText( "#808080" );
-		htmlLb.setToolTipText( getMessage( "window.colorGroup.tooltip.html" ) );
+		htmlText = new Text( this, SWT.NONE );
+		htmlText.setBounds( 35, 64, 50, 15 );
+		htmlText.setText( "#808080" );
+		htmlText.setToolTipText( getMessage( "window.colorGroup.tooltip.html" ) );
 
 		// TODO alpha 150
 		setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-		Point size = new Point( 90, 110 );
-		setSize( size );
+		setSize(95,100);
+
 	}
 
 	public void setColorInfo( Color color )
 	{
 
-		redNumberLb.setText( "" + color.getRed() );
-		greenNumberLb.setText( "" + color.getGreen() );
-		blueNumberLb.setText( "" + color.getBlue() );
+		redNumberText.setText( "" + color.getRed() );
+		greenNumberText.setText( "" + color.getGreen() );
+		blueNumberText.setText( "" + color.getBlue() );
 
-		redColorLb.setSize( color.getRed() / 6, 10 );
-		greenColorLb.setSize( color.getGreen() / 6, 10 );
-		blueColorLb.setSize( color.getBlue() / 6, 10 );
+		redColorLb.setSize( color.getRed() / 6, 12 );
+		greenColorLb.setSize( color.getGreen() / 6, 12 );
+		blueColorLb.setSize( color.getBlue() / 6, 12 );
 
-		htmlLb.setText( getColorHtml( color ) );
+		htmlText.setText( getColorHtml( color ) );
 		colorLb.setBackground( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
 	}
 
 	public String getColorHtml()
 	{
 
-		return htmlLb.getText();
+		return htmlText.getText();
 	}
 
 	private String getColorHtml( Color color )
