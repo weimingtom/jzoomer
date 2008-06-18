@@ -1,8 +1,10 @@
 20080618
 1.	Bux修正：
+	·修正工程中加载lib路径不正确的bug
 2.	功能添加：
 3.	核心调整：
-	·在Google Code上添加了SVN地址用于维护，地址为：http://jzoomer.googlecode.com/svn/trunk/
+	·在Google Code上添加了SVN地址用于维护，地址为：https://jzoomer.googlecode.com/svn/trunk/
+	·重构鼠标拖拽Widget和面板的方法
 4.	版本变更：
 
 20080617
