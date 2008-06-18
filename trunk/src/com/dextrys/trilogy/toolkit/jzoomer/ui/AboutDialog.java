@@ -14,6 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicDialog;
@@ -29,19 +30,24 @@ public class AboutDialog extends BasicDialog
 	private String title;
 	private String version;
 	private String author;
-	private String email1,email2;
+	private String email1, email2;
 	private String msn;
 	private String logStr;
-	
+	private String svn;
+	private String svnPath;
+
 	public AboutDialog( Shell parent )
 	{
+
 		super( parent );
 		title = getMessage( "dialog.about.title" );
 		author = getMessage( "dialog.about.author" );
 		email1 = getMessage( "dialog.about.email1" );
 		email2 = getMessage( "dialog.about.email2" );
 		msn = getMessage( "dialog.about.msn" );
-		
+		svn = getMessage( "dialog.about.svn" );
+		svnPath = getMessage( "dialog.about.svnPath" );
+
 		version = JZoomerConstant.VERSION;
 		try
 		{
@@ -62,39 +68,44 @@ public class AboutDialog extends BasicDialog
 
 		Shell parent = getParent();
 		final Shell dialog = new Shell( parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL );
-		dialog.setImage(SWTResourceManager.getImage(AboutDialog.class, "/icons/magnifier.png"));
+		dialog.setImage( SWTResourceManager.getImage( AboutDialog.class, "/icons/magnifier.png" ) );
 		dialog.setSize( 321, 279 );
 		dialog.setText( title + " " + version );
-		
+
 		Button okBtn = new Button( dialog, SWT.NONE );
-		okBtn.setImage(SWTResourceManager.getImage(AboutDialog.class, "/icons/magnifier.png"));
+		okBtn.setImage( SWTResourceManager.getImage( AboutDialog.class, "/icons/magnifier.png" ) );
 		okBtn.setToolTipText( getMessage( "dialog.about.button.ok" ) );
 		okBtn.setBounds( 230, 10, 74, 74 );
 		okBtn.addSelectionListener( new SelectionAdapter()
 		{
 			public void widgetSelected( SelectionEvent e )
 			{
+
 				dialog.dispose();
 			}
 		} );
 
-		aboutText = new Text(dialog, SWT.MULTI | SWT.READ_ONLY);
-		aboutText.setBounds(10, 23, 214, 61);
+		aboutText = new Text( dialog, SWT.MULTI | SWT.READ_ONLY );
+		aboutText.setBounds( 10, 15, 214, 53 );
 		aboutText.setText( author + "\n" + email1 + "\n" + email2 + "\n" + msn );
-		
+
+		final Link svnLink = new Link( dialog, SWT.NONE );
+		svnLink.setText( "<a href=\"" + svnPath + "\">" + svnPath + "</a>" );
+		svnLink.setToolTipText( svn );
+		svnLink.setBounds( 10, 70, 214, 13 );
+
 		final Group logGroup = new Group( dialog, SWT.NONE );
 		logGroup.setText( getMessage( "dialog.about.group.title" ) );
 		logGroup.setBounds( 10, 90, 294, 146 );
 
-		logText = new Text(logGroup, SWT.V_SCROLL | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-		logText.setEditable(false);
-		logText.setDoubleClickEnabled(false);
-		logText.setBounds(10, 15, 274, 121);
+		logText = new Text( logGroup, SWT.V_SCROLL | SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
+		logText.setEditable( false );
+		logText.setDoubleClickEnabled( false );
+		logText.setBounds( 10, 15, 274, 121 );
 		logText.setText( logStr );
-		
+
 		DisplayUtil.showOnAtScreenMiddle( dialog );
 
-		
 		dialog.open();
 		Display display = parent.getDisplay();
 		while( !dialog.isDisposed() )
