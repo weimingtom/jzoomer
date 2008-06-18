@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Mon Jun 16 16:18:38 CST 2008
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=package\\jZoomer_1.01\\jZoomer v1.01.jar
+manifest.mergeall=true
+manifest.mainclass=com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=<jar|org.eclipse.equinox.registry_3.3.1.R33x_v20070802.jar>;<jar|org.eclipse.text_3.3.0.v20070606-0010.jar>;<jar|org.eclipse.ui.workbench_3.3.1.M20070921-1200.jar>
+includes=
