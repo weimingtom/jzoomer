@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Robot;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -18,14 +17,11 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
-import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
 
@@ -81,12 +77,12 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void pickupColor()
 	{
 
-		System.out.println( "pick up color" );
+		//System.out.println( "pick up color" );
 		Color color = getCurrentMouseLocationColor();
 		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
-		//TODO save color info into clip
 		String cHtml = getColorHtml();
 		
+		//save color info into clipboard
 		clipboard.setContents( new Object[]{ cHtml }, new Transfer[]{ text_transfer } );
 		
 	}
