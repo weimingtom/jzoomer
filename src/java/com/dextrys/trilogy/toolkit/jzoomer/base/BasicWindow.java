@@ -33,7 +33,6 @@ public class BasicWindow extends ApplicationWindow implements MouseMoveListener,
 
 	public BasicWindow()
 	{
-
 		super( null );
 		if( JZoomerConstant.LOCALE != null )
 		{
