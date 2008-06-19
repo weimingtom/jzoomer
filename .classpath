@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="test/java"/>
 	<classpathentry kind="src" path="test/res"/>
 	<classpathentry kind="src" path="src/res"/>
+	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.3.1.R33x_v20070828.jar" sourcepath="D:/software/eclipse/plugins/org.eclipse.rcp.source_3.3.1.R33x_r20070802-8y8eE8sEV3Fz0z0GlHJrXvTAUS/src/org.eclipse.osgi_3.3.1.R33x_v20070828/src.zip"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.ui.forms_3.3.0.v20070511.jar" sourcepath="D:/software/eclipse/plugins/org.eclipse.platform.source_3.3.1.R33x_r20070911-_19UEkpF-B7Uh2hKy75y/src/org.eclipse.ui.forms_3.3.0.v20070511/src.zip"/>

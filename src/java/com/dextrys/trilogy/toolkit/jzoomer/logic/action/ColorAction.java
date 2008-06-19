@@ -19,6 +19,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolTip;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
@@ -35,6 +36,7 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private int r, g, b;
 	private boolean isHotKeyPressed, isStopped;;
 	private ColorInfoGroup colorInfoGroup;
+	private ToolTip tooltip;
 
 	private static Clipboard clipboard = new Clipboard( Display.getCurrent() );
 	private static TextTransfer text_transfer = TextTransfer.getInstance();
@@ -104,7 +106,7 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void showColorInfo()
 	{
 
-		System.out.println( "show color info" );
+		//System.out.println( "show color info" );
 		if( isStopped ) return;
 		Color color = getCurrentMouseLocationColor();
 		r = color.getRed();
@@ -119,6 +121,11 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 		// pickup color immediately
 		pickupColor();
+		// stop pickup color dynamically
+		isStopped = false;
+		// show color info in tray tooltip
+		tooltip.setMessage( getMessage( "action.color.tooltip.clip", getColorHtml() ) );
+		tooltip.setVisible( true );
 	}
 	public void mouseUp( MouseEvent e )
 	{
@@ -191,5 +198,14 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	{
 
 		this.colorInfoGroup = colorInfoGroup;
+	}
+
+	/**
+	 * @param tooltip the tooltip to set
+	 */
+	public void setTooltip( ToolTip tooltip )
+	{
+	
+		this.tooltip = tooltip;
 	}
 }

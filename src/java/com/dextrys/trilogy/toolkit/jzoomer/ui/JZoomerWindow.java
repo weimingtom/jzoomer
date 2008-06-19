@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
@@ -69,6 +70,9 @@ public class JZoomerWindow extends BasicWindow implements Listener
 	private Timer timer;
 	private Image currentImage;
 	// private GC gc;
+
+	private ToolTip tooltip;
+
 	/**
 	 * Create the application window
 	 */
@@ -91,8 +95,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		// getShell().getMenuBar().addMenuListener( toggleMonitorAction );
 		timer = new Timer( capture_per_millisecond, zoomInAction );
 		timer.start();
-
-		initTray();
+		
 		setShowAtScreenCenter();
 	}
 	/**
@@ -105,6 +108,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		trayItem = new TrayItem( tray, SWT.NONE );
 		trayItem.setImage( SWTResourceManager.getImage( JZoomerWindow.class, "/icons/magnifier.png" ) );
 		trayItem.setToolTipText( getMessage( "window.tray.tooltip", getCurrentZoomRate() + "" ) );
+		trayItem.setToolTip( tooltip );
 		final Menu menu = createTrayMenuManager().createContextMenu( getShell() );
 		trayItem.addMenuDetectListener( new MenuDetectListener()
 		{
@@ -153,7 +157,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			}
 
 		} );
-		
+
 		// getShell().getMenuBar().addMenuListener( toggleMonitorAction );
 		// tracker = new Tracker( getShell().getDisplay(), SWT.RESIZE );
 		tracker = new Tracker( container, SWT.RESIZE );
@@ -163,16 +167,16 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		// container.addListener( SWT.MouseUp, this );
 		// container.addListener( SWT.MouseMove, this );
 
-		colorInfoGroup = new ColorInfoGroup(container, SWT.NONE);
+		colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
 		colorInfoGroup.setVisible( false );
 		// implement mouse drag
 		colorInfoGroup.addMouseMoveListener( this );
 		colorInfoGroup.addMouseListener( this );
-		
+
 		canvas = new Canvas( container, SWT.NONE );
 		canvas.setVisible( false );
 		canvas.setMenu( createPopupMenuManager().createContextMenu( container ) );
-		
+
 		// implement mouse drag
 		canvas.addMouseMoveListener( this );
 		canvas.addMouseListener( this );
@@ -181,13 +185,18 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		canvas.addMouseTrackListener( toggleMonitorAction );
 		// implement color pick-up
 		canvas.addMouseListener( colorAction );
-		//canvas.addKeyListener( colorAction );
+		// canvas.addKeyListener( colorAction );
 		canvas.addMouseMoveListener( colorAction );
-		
-		
+
+		tooltip = new ToolTip( getShell(), SWT.BALLOON | SWT.ICON_INFORMATION );
+		tooltip.setText( getMessage( "window.tooltip.title" ) );
+		tooltip.setAutoHide( true );
+		initTray();
 		
 		colorAction.setCanvas( canvas );
 		colorAction.setColorInfoGroup( colorInfoGroup );
+		colorAction.setTooltip( tooltip );
+		showAction.setTooltip( tooltip );
 
 		return container;
 	}
@@ -237,7 +246,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			canvas.setVisible( false );
 			zoomInAction.setEnabled( true );
 			zoomOutAction.setEnabled( true );
-			//hidden colorInfo panel
+			// hidden colorInfo panel
 			colorAction.setChecked( false );
 			colorAction.run();
 			timer.start();
@@ -254,7 +263,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 			canvas.setSize( container.getSize() );
 			canvas.setLocation( 0, 0 );
 			canvas.setVisible( true );
-			//show colorInfo panel
+			// show colorInfo panel
 			colorAction.setChecked( true );
 			colorAction.run();
 			// TODO zoom currentImage in future
@@ -528,7 +537,6 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		this.backgroundColor = backgroundColor;
 	}
 
-
 	/**
 	 * @return the tracker
 	 */
@@ -536,6 +544,15 @@ public class JZoomerWindow extends BasicWindow implements Listener
 	{
 
 		return tracker;
+	}
+
+	/**
+	 * @return the toolTip
+	 */
+	public ToolTip getToolTip()
+	{
+
+		return tooltip;
 	}
 
 }
