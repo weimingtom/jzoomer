@@ -1,5 +1,9 @@
 package com.dextrys.trilogy.toolkit.jzoomer.ui;
 
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
@@ -11,7 +15,8 @@ import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.win32.OS;
+import org.eclipse.swt.internal.win32.TCHAR;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -34,6 +39,8 @@ import com.dextrys.trilogy.toolkit.jzoomer.logic.action.MouseAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ShowAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ToggleMonitorAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ZoomAction;
+import com.dextrys.trilogy.util.swt.DisplayUtil;
+import com.dextrys.trilogy.util.swt.ImageConvertor;
 import com.dextrys.trilogy.util.swt.ImageUtil;
 import com.swtdesigner.SWTResourceManager;
 import javax.swing.Timer;
@@ -42,7 +49,7 @@ import javax.swing.Timer;
  * @author talent_marquis<��˺��> Email: talent_marquis@163.com Copyright (C) 2008 talent_marquis<��˺��>
  * All rights reserved. Create Date:Jun 14, 2008
  */
-public class JZoomerWindow extends BasicWindow implements Listener
+public class JZoomerWindow extends BasicWindow
 {
 	private Tray tray;
 
@@ -63,12 +70,16 @@ public class JZoomerWindow extends BasicWindow implements Listener
 
 	private Color backgroundColor = JZoomerConstant.BACKGROUND_COLOR_DEFAULT;
 
+	private Tracker tracker;
+	
 	private TrayItem trayItem;
 	private Canvas canvas;
 	private ColorInfoGroup colorInfoGroup;
 	private Composite container;
 	private Timer timer;
 	private Image currentImage;
+	
+	private Robot robot = JZoomerConstant.ROBOT;
 	// private GC gc;
 
 	private ToolTip tooltip;
@@ -80,6 +91,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 	{
 
 		super();
+		
 		setAlwaysOnTop( JZoomerConstant.ALWAYS_ON_TOP );
 		createActions();
 		addMenuBar();
@@ -114,10 +126,10 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		{
 			public void menuDetected( MenuDetectEvent e )
 			{
-
 				menu.setVisible( true );
 			}
 		} );
+
 	}
 	/**
 	 * Create contents of the application window
@@ -168,6 +180,7 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		// container.addListener( SWT.MouseMove, this );
 
 		colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
+		setTransparent( colorInfoGroup, 125 );
 		colorInfoGroup.setVisible( false );
 		// implement mouse drag
 		colorInfoGroup.addMouseMoveListener( this );
@@ -193,6 +206,8 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		tooltip.setAutoHide( true );
 		initTray();
 		
+		zoomInAction.setCanvas( canvas );
+		zoomOutAction.setCanvas( canvas );
 		colorAction.setCanvas( canvas );
 		colorAction.setColorInfoGroup( colorInfoGroup );
 		colorAction.setTooltip( tooltip );
@@ -201,41 +216,8 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		return container;
 	}
 
-	private Tracker tracker;
-	private Point point;
-	public void handleEvent( Event event )
-	{
 
-		switch( event.type )
-		{
-			case SWT.MouseDown:
-				point = new Point( event.x, event.y );
-				// System.out.println( point );
-				tracker.setRectangles( new Rectangle[]
-				{
-					new Rectangle( point.x, point.y, 0, 0 )
-				} );
-				// tracker.setStippled( true );
-
-				tracker.open();
-				break;
-			case SWT.MouseMove:
-				if( point == null )
-				{
-					return;
-				}
-				// System.out.println(point);
-			case SWT.MouseUp:
-				System.out.println( point );
-				if( tracker != null )
-				{
-					tracker.close();
-				}
-				point = null;
-				break;
-		}
-	}
-
+ 
 	public void toggleMonitor( boolean flag )
 	{
 
@@ -243,37 +225,56 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		{
 			System.out.println( "invoke toggle on " );
 			// Convert capture Image from canvas backgroundImage to container backgroundImage
+			//container.setBackgroundImage( canvas.getBackgroundImage() );
 			canvas.setVisible( false );
-			zoomInAction.setEnabled( true );
-			zoomOutAction.setEnabled( true );
-			// hidden colorInfo panel
 			colorAction.setChecked( false );
 			colorAction.run();
 			timer.start();
-			// TODO zoom currentImage in future
+			if( canvas.getBackgroundImage() != null )
+			{
+				canvas.setBackgroundImage( null );
+			}
+			if( currentImage != null )
+			{
+				currentImage = null;
+			}
+			
 		} else
 		{
-			System.out.println( "invoke toggle off" );
-			// Convert capture Image from cantainer backgroundImage to canvas backgroundImage
+			//System.out.println( "invoke toggle off" );
+			container.setBackground( backgroundColor );
+			// capture current image and put it into canvas
+			Point mouseLocation = Display.getDefault().getCursorLocation();
+			int currentWidth = container.getSize().x;
+			int currentHeight = container.getSize().y;
+			
+			
+			Rectangle sampleRectangle = new Rectangle( mouseLocation.x - ( currentWidth / 2 ),
+					mouseLocation.y - ( currentHeight / 2 ), currentWidth, currentHeight );
+			
+			//this.getShell().setVisible( false );
+			BufferedImage bi = robot.createScreenCapture( sampleRectangle );
+			//this.getShell().setVisible( true );
+
+			timer.stop();
 			if( container.getBackgroundImage() != null )
 			{
-				currentImage = new Image( Display.getDefault(), container.getBackgroundImage(), SWT.IMAGE_COPY );
+				container.getBackgroundImage().dispose();
+				container.setBackgroundImage( null );
+				container.update();
 			}
-			canvas.setBackgroundImage( currentImage );
-			canvas.setSize( container.getSize() );
-			canvas.setLocation( 0, 0 );
+			
+			currentImage = new Image( Display.getDefault(), ImageConvertor.getImageData( bi ) );
+		
+			Image zoomImage = ImageUtil.getScaledImage( currentImage, currentZoomRate );
+			canvas.setSize( zoomImage.getBounds().width, zoomImage.getBounds().height );
+			canvas.setBackgroundImage( zoomImage );
+			DisplayUtil.setWidgetAtCenter( canvas );
 			canvas.setVisible( true );
+			System.out.println( container.getBackgroundImage() );
 			// show colorInfo panel
 			colorAction.setChecked( true );
 			colorAction.run();
-			// TODO zoom currentImage in future
-			zoomInAction.setEnabled( false );
-			zoomOutAction.setEnabled( false );
-
-			// container.setImageDisplayMode( ImageComposite.CENTRE );
-			// currentImage = ImageUtil.getControlImage( container );
-			timer.stop();
-			container.setBackgroundImage( null );
 		}
 	}
 
@@ -430,6 +431,31 @@ public class JZoomerWindow extends BasicWindow implements Listener
 		newShell.setImage( SWTResourceManager.getImage( JZoomerWindow.class, "/icons/magnifier.png" ) );
 		newShell.setSize( currentWidth, currentHeight );
 		newShell.setMinimumSize( JZoomerConstant.WINDOW_MIN_WIDTH, JZoomerConstant.WINDOW_MIN_HEIGHT );
+		
+	}
+	
+	private void setTransparent( Control control, int alpha )
+	{
+		OS.SetWindowLong( control.handle, OS.GWL_EXSTYLE, OS.GetWindowLong( control.handle, OS.GWL_EXSTYLE ) ^ 0x80000 );
+
+		TCHAR lpLibFileName = new TCHAR( 0, "User32.dll", true );
+		int hInst = OS.LoadLibrary( lpLibFileName );
+		if( hInst != 0 )
+		{
+			String name = "SetLayeredWindowAttributes\0";
+			byte[] lpProcName = new byte[ name.length() ];
+			for( int i = 0; i < lpProcName.length; i++ )
+			{
+				lpProcName[ i ] = ( byte ) name.charAt( i );
+			}
+			final int fun = OS.GetProcAddress( hInst, lpProcName );
+			if( fun != 0 )
+			{
+
+				OS.CallWindowProc( fun, control.handle, 0, 200, 2 );
+			}
+			OS.FreeLibrary( hInst );
+		}
 	}
 
 	/**
@@ -553,6 +579,15 @@ public class JZoomerWindow extends BasicWindow implements Listener
 	{
 
 		return tooltip;
+	}
+
+	/**
+	 * @return the currentImage
+	 */
+	public Image getCurrentImage()
+	{
+	
+		return currentImage;
 	}
 
 }

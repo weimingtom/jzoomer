@@ -12,6 +12,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.Control;
@@ -226,5 +227,21 @@ public class ImageUtil
 		gc.dispose();
 		
 		return image;
+	}
+	
+	public static Image getScaledImage( Image image, int width, int height )
+	{
+		return new Image( Display.getDefault(), image.getImageData().scaledTo( width, height ) );
+	}
+
+	public static Image getScaledImage( Image image, int rate )
+	{
+		Point zoomSize = new Point( 
+				( rate > 0 ) ? image.getBounds().width * rate : image.getBounds().width / -rate, 
+				(rate > 0 ) ?  image.getBounds().height * rate : image.getBounds().height / -rate );
+
+		ImageData zoomImageData = (ImageData)image.getImageData().clone();
+		return new Image( Display.getDefault(), zoomImageData.scaledTo( zoomSize.x, zoomSize.y ) );
+
 	}
 }
