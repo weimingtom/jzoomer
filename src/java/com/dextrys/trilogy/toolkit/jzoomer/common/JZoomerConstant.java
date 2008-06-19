@@ -1,5 +1,7 @@
 package com.dextrys.trilogy.toolkit.jzoomer.common;
 
+import java.awt.AWTException;
+import java.awt.Robot;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
@@ -13,11 +15,13 @@ import com.dextrys.trilogy.util.SystemPropertiesReader;
 public class JZoomerConstant
 {
 	public static final String SYSTEM_FILE = "conf/system.properties";
-	private static SystemPropertiesReader reader = new SystemPropertiesReader();
+	private static SystemPropertiesReader reader = new SystemPropertiesReader(SYSTEM_FILE);
 	
 	public static final String ACTION_MESSAGE_BUNDLE_NAME = "language.action_message";
 	public static final String WINDOW_MESSAGE_BUNDLE_NAME = "language.window_message";
 	public static final String DIALOG_MESSAGE_BUNDLE_NAME = "language.dialog_message";
+	
+	public static Robot ROBOT = getRobot();
 	
 	
 	public static final String VERSION = reader.getProperty( "version" );							// v1.01
@@ -41,6 +45,18 @@ public class JZoomerConstant
 	public static final boolean ALWAYS_ON_TOP = reader.getBooleanProperty( "on_top" );			// true
 	public static final boolean EXIT_CONFIRM = reader.getBooleanProperty( "exit.confirm" );		// false
 
+	public static Robot getRobot()
+	{
+		try
+		{
+			return new Robot();
+		}
+		catch( AWTException e )
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public static URL newURL( String url_name )
 	{
@@ -53,4 +69,5 @@ public class JZoomerConstant
 			throw new RuntimeException( "Malformed URL " + url_name, e );
 		}
 	}
+	
 }

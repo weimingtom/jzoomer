@@ -11,15 +11,19 @@ import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
+import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.dextrys.trilogy.util.swt.ImageConvertor;
 import com.dextrys.trilogy.util.swt.ImageUtil;
 import com.swtdesigner.ResourceManager;
@@ -29,7 +33,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	private JZoomerWindow window;
 
 	private int zoomType;
-	private int zoomRate;
+	//private int zoomRate;
 
 	private Composite container;
 	private Robot robot;
@@ -37,6 +41,13 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	private ImageData imgData;
 	private Image captureImg;
 	private int imagScaleType;
+
+	private static Canvas canvas;
+	private static Point zoomSize;
+
+	private static Image currentImage;
+	private static Image zoomImage;
+	private static ImageData zoomImageData;
 
 	public static final int TYPE_ZOOM_IN = 1;
 	public static final int TYPE_ZOOM_OUT = 2;
@@ -73,7 +84,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	public void run()
 	{
 
-		zoomRate = window.getCurrentZoomRate();
+		//zoomRate = window.getCurrentZoomRate();
 		if( zoomType == TYPE_ZOOM_IN )
 		{
 			doZoomIn();
@@ -88,7 +99,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	public void mouseScrolled( MouseEvent e )
 	{
 
-		zoomRate = window.getCurrentZoomRate();
+		//zoomRate = window.getCurrentZoomRate();
 		if( e.count > 0 )
 		{
 			doZoomOut();
@@ -99,44 +110,68 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 		window.refresh();
 	}
 
+	
+
+	private void doZoomCurrentImage( int rate )
+	{
+		currentImage = window.getCurrentImage();
+		zoomImage = ImageUtil.getScaledImage( currentImage, rate );
+		zoomSize = new Point( zoomImage.getBounds().width, zoomImage.getBounds().height);
+		canvas.setSize( zoomSize.x, zoomSize.y );
+		canvas.getBackgroundImage().dispose();
+		canvas.setBackgroundImage( zoomImage );
+		DisplayUtil.setWidgetAtCenter( canvas );
+	}
+	
 	private void doZoomIn()
 	{
-		if( window.getTimer().isRunning() )
-		{//process dynamic image
-			if( zoomRate > JZoomerConstant.ZOOM_RATE_MIN )
-			{
-				zoomRate--;
-				if( zoomRate == 0 || zoomRate == -1 )
-				{// skip rate = 0 or rate = -1
-					zoomRate = -2;
-				}
-				window.setCurrentZoomRate( zoomRate );
+		int rate = window.getCurrentZoomRate();
+		if( rate <= JZoomerConstant.ZOOM_RATE_MIN )
+		{
+			//the zoom rate have reached to minimum value
+			return;
+		} else
+		{
+			rate--;
+			if( rate == 0 || rate == -1 )
+			{// skip rate = 0 or rate = -1
+				rate = -2;
 			}
 		}
-		else
-		{//TODO process currentImage
-			
-		}
-	}
 
+		if( window.getTimer().isRunning() )
+		{// process dynamic image
+		} else
+		{// TODO process currentImage
+			doZoomCurrentImage( rate );
+		}
+		window.setCurrentZoomRate( rate );
+	}
+	
 	private void doZoomOut()
 	{
-		if( window.getTimer().isRunning() )
-		{//process dynamic image
-			if( zoomRate < JZoomerConstant.ZOOM_RATE_MAX )
-			{
-				zoomRate++;
-				if( zoomRate == 0 || zoomRate == -1 )
-				{// skip rate = 0 or rate = -1
-					zoomRate = 1;
-				}
-				window.setCurrentZoomRate( zoomRate );
+		int rate = window.getCurrentZoomRate();
+		if( rate >= JZoomerConstant.ZOOM_RATE_MAX )
+		{
+			//the zoom rate have reached to maximum value
+			return;
+
+		} else
+		{
+			rate++;
+			if( rate == 0 || rate == -1 )
+			{// skip rate = 0 or rate = -1
+				rate = 1;
 			}
 		}
-		else
-		{//TODO process currentImage
-			
+
+		if( window.getTimer().isRunning() )
+		{// process dynamic image
+		} else
+		{// TODO process currentImage
+			doZoomCurrentImage( rate );
 		}
+		window.setCurrentZoomRate( rate );
 	}
 
 	public void actionPerformed( ActionEvent e )
@@ -151,7 +186,6 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 		{
 			public void run()
 			{
-
 				int mouseX = MouseInfo.getPointerInfo().getLocation().x;
 				int mouseY = MouseInfo.getPointerInfo().getLocation().y;
 				int currentWidth = window.getContainer().getSize().x;
@@ -163,6 +197,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 						mouseY - ( captureHeight / 2 ), captureWidth, captureHeight );
 
 				bi = robot.createScreenCapture( sampleRectangle );
+				
 				if( rate == 1 || rate == -1 )
 				{
 					// do not scale the capture area
@@ -186,5 +221,14 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 				}
 			}
 		} );
+	}
+
+	/**
+	 * @param canvas the canvas to set
+	 */
+	public void setCanvas( Canvas canvas )
+	{
+	
+		this.canvas = canvas;
 	}
 }
