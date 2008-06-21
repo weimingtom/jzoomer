@@ -94,8 +94,8 @@ public class BasicComposite extends Composite implements MouseMoveListener, Mous
 			c.setCursor( BasicWindow.CURSOR_HAND );
 			mouseX = e.x + c.getLocation().x;
 			mouseY = e.y + c.getLocation().y;
-			System.out.println( "mouse move: e (x,y)" + "(" + e.x + "," + e.y + ")" );
-			System.out.println( "mouse move: canvas (x,y)" + "(" + c.getLocation().x + "," + c.getLocation().y + ")" );
+			//System.out.println( "mouse move: e (x,y)" + "(" + e.x + "," + e.y + ")" );
+			//System.out.println( "mouse move: canvas (x,y)" + "(" + c.getLocation().x + "," + c.getLocation().y + ")" );
 			c.setLocation( mouseX - locationX, mouseY - locationY );
 		}
 
