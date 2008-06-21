@@ -6,6 +6,7 @@
 3.	核心调整：
 	·在system.properties中添加“tray.message.show”字段用以控制是否在托盘区显示提示信息
 	·实现TrackerAction用以实现测量功能
+	·对jZoomer.googlecode.com的首页重新进行排版，方便阅读
 4.	版本变更：
 	版本升级为1.2.0
 
