@@ -36,7 +36,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	//private int zoomRate;
 
 	private Composite container;
-	private Robot robot;
+	private Robot robot = JZoomerConstant.ROBOT;
 	private BufferedImage bi;
 	private ImageData imgData;
 	private Image captureImg;
@@ -59,14 +59,7 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 		this.container = window.getContainer();
 		this.zoomType = type;
 		this.imagScaleType = JZoomerConstant.IMAGE_SCALE_TYPE;
-		try
-		{
-			this.robot = new Robot();
-		}
-		catch( AWTException e )
-		{
-			e.printStackTrace();
-		}
+
 		switch( type )
 		{
 			case TYPE_ZOOM_IN:
@@ -181,7 +174,16 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 		{
 			container = window.getContainer();
 		}
+		if( window.getShell().isDisposed() )
+		{
+			return;
+		}
 
+		if( Display.getDefault().isDisposed() )
+		{
+			return;
+		}
+		
 		Display.getDefault().syncExec( new Runnable()
 		{
 			public void run()

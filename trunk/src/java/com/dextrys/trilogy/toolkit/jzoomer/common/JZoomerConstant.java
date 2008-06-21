@@ -42,8 +42,9 @@ public class JZoomerConstant
 	
 	public static final int CAPTURE_PER_MILLISECOND = reader.getIntegerProperty( "capture.millisecond" );	// 50
 
-	public static final boolean ALWAYS_ON_TOP = reader.getBooleanProperty( "on_top" );			// true
-	public static final boolean EXIT_CONFIRM = reader.getBooleanProperty( "exit.confirm" );		// false
+	public static final boolean ALWAYS_ON_TOP = reader.getBooleanProperty( "on_top" );					// true
+	public static final boolean EXIT_CONFIRM = reader.getBooleanProperty( "exit.confirm" );				// false
+	public static final boolean TRAY_MESSAGE_SHOW = reader.getBooleanProperty( "tray.message.show" );	//true
 
 	public static Robot getRobot()
 	{

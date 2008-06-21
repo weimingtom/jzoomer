@@ -1,6 +1,7 @@
 package com.dextrys.trilogy.toolkit.jzoomer.ui;
 
 import java.awt.AWTException;
+import java.awt.Button;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
@@ -12,6 +13,9 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -22,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -38,6 +43,7 @@ import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ExitAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.MouseAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ShowAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ToggleMonitorAction;
+import com.dextrys.trilogy.toolkit.jzoomer.logic.action.TrackerAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ZoomAction;
 import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.dextrys.trilogy.util.swt.ImageConvertor;
@@ -51,7 +57,6 @@ import javax.swing.Timer;
  */
 public class JZoomerWindow extends BasicWindow
 {
-	private Tray tray;
 
 	private ExitAction exitAction;
 	private ShowAction showAction;
@@ -62,6 +67,7 @@ public class JZoomerWindow extends BasicWindow
 	private ToggleMonitorAction toggleMonitorAction;
 	private AboutAction aboutAction;
 	private ColorAction colorAction;
+	private TrackerAction trackerAction;
 
 	private int currentWidth = JZoomerConstant.WINDOW_INIT_WIDTH;
 	private int currentHeight = JZoomerConstant.WINDOW_INIT_HEIGHT;
@@ -71,14 +77,15 @@ public class JZoomerWindow extends BasicWindow
 	private Color backgroundColor = JZoomerConstant.BACKGROUND_COLOR_DEFAULT;
 
 	private Tracker tracker;
-	
+
+	private Tray tray;
 	private TrayItem trayItem;
 	private Canvas canvas;
 	private ColorInfoGroup colorInfoGroup;
 	private Composite container;
 	private Timer timer;
 	private Image currentImage;
-	
+
 	private Robot robot = JZoomerConstant.ROBOT;
 	// private GC gc;
 
@@ -91,7 +98,6 @@ public class JZoomerWindow extends BasicWindow
 	{
 
 		super();
-		
 		setAlwaysOnTop( JZoomerConstant.ALWAYS_ON_TOP );
 		createActions();
 		addMenuBar();
@@ -107,7 +113,7 @@ public class JZoomerWindow extends BasicWindow
 		// getShell().getMenuBar().addMenuListener( toggleMonitorAction );
 		timer = new Timer( capture_per_millisecond, zoomInAction );
 		timer.start();
-		
+
 		setShowAtScreenCenter();
 	}
 	/**
@@ -123,13 +129,24 @@ public class JZoomerWindow extends BasicWindow
 		trayItem.setToolTip( tooltip );
 		final Menu menu = createTrayMenuManager().createContextMenu( getShell() );
 		trayItem.addMenuDetectListener( new MenuDetectListener()
-		{
-			public void menuDetected( MenuDetectEvent e )
 			{
-				menu.setVisible( true );
+				public void menuDetected( MenuDetectEvent e )
+				{
+					menu.setVisible( true );
+				}
+			} 
+		);
+		
+		trayItem.addSelectionListener( new SelectionAdapter() 
+			{
+				public void widgetSelected( SelectionEvent e )
+				{
+					//System.out.println( "trayItem selected");
+					showAction.run();
+				}
+				
 			}
-		} );
-
+		);
 	}
 	/**
 	 * Create contents of the application window
@@ -170,17 +187,8 @@ public class JZoomerWindow extends BasicWindow
 
 		} );
 
-		// getShell().getMenuBar().addMenuListener( toggleMonitorAction );
-		// tracker = new Tracker( getShell().getDisplay(), SWT.RESIZE );
-		tracker = new Tracker( container, SWT.RESIZE );
-		// tracker.setStippled( true );
-
-		// container.addListener( SWT.MouseDown, this );
-		// container.addListener( SWT.MouseUp, this );
-		// container.addListener( SWT.MouseMove, this );
-
 		colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
-		setTransparent( colorInfoGroup, 125 );
+		//setTransparent( colorInfoGroup, 125 );
 		colorInfoGroup.setVisible( false );
 		// implement mouse drag
 		colorInfoGroup.addMouseMoveListener( this );
@@ -190,34 +198,47 @@ public class JZoomerWindow extends BasicWindow
 		canvas.setVisible( false );
 		canvas.setMenu( createPopupMenuManager().createContextMenu( container ) );
 
+		// implement measure
+		canvas.addMouseListener( trackerAction );
+		canvas.addMouseMoveListener( trackerAction );
+		// implement color pick-up
+		canvas.addMouseListener( colorAction );
+		// canvas.addKeyListener( colorAction );
+		canvas.addMouseMoveListener( colorAction );
 		// implement mouse drag
 		canvas.addMouseMoveListener( this );
 		canvas.addMouseListener( this );
 		// when mouse move in or move, stop monitor
 		canvas.addMouseMoveListener( toggleMonitorAction );
 		canvas.addMouseTrackListener( toggleMonitorAction );
-		// implement color pick-up
-		canvas.addMouseListener( colorAction );
-		// canvas.addKeyListener( colorAction );
-		canvas.addMouseMoveListener( colorAction );
+		
 
 		tooltip = new ToolTip( getShell(), SWT.BALLOON | SWT.ICON_INFORMATION );
 		tooltip.setText( getMessage( "window.tooltip.title" ) );
 		tooltip.setAutoHide( true );
-		initTray();
+
+		// tracker = new Tracker( getShell().getDisplay(), SWT.RESIZE );
+		tracker = new Tracker( canvas, SWT.RESIZE );
+		tracker.addControlListener( trackerAction );
+		// tracker.setStippled( true );
 		
+		initTray();
+
 		zoomInAction.setCanvas( canvas );
 		zoomOutAction.setCanvas( canvas );
+		
 		colorAction.setCanvas( canvas );
 		colorAction.setColorInfoGroup( colorInfoGroup );
 		colorAction.setTooltip( tooltip );
+		
 		showAction.setTooltip( tooltip );
+				
+		trackerAction.setCanvas( canvas );
+		trackerAction.setTracker( tracker );
 
 		return container;
 	}
 
-
- 
 	public void toggleMonitor( boolean flag )
 	{
 
@@ -225,7 +246,7 @@ public class JZoomerWindow extends BasicWindow
 		{
 			System.out.println( "invoke toggle on " );
 			// Convert capture Image from canvas backgroundImage to container backgroundImage
-			//container.setBackgroundImage( canvas.getBackgroundImage() );
+			// container.setBackgroundImage( canvas.getBackgroundImage() );
 			canvas.setVisible( false );
 			colorAction.setChecked( false );
 			colorAction.run();
@@ -238,23 +259,22 @@ public class JZoomerWindow extends BasicWindow
 			{
 				currentImage = null;
 			}
-			
+
 		} else
 		{
-			//System.out.println( "invoke toggle off" );
+			System.out.println( "invoke toggle off" );
 			container.setBackground( backgroundColor );
 			// capture current image and put it into canvas
 			Point mouseLocation = Display.getDefault().getCursorLocation();
 			int currentWidth = container.getSize().x;
 			int currentHeight = container.getSize().y;
-			
-			
-			Rectangle sampleRectangle = new Rectangle( mouseLocation.x - ( currentWidth / 2 ),
-					mouseLocation.y - ( currentHeight / 2 ), currentWidth, currentHeight );
-			
-			//this.getShell().setVisible( false );
+
+			Rectangle sampleRectangle = new Rectangle( mouseLocation.x - ( currentWidth / 2 ), mouseLocation.y
+					- ( currentHeight / 2 ), currentWidth, currentHeight );
+
+			// this.getShell().setVisible( false );
 			BufferedImage bi = robot.createScreenCapture( sampleRectangle );
-			//this.getShell().setVisible( true );
+			// this.getShell().setVisible( true );
 
 			timer.stop();
 			if( container.getBackgroundImage() != null )
@@ -263,9 +283,9 @@ public class JZoomerWindow extends BasicWindow
 				container.setBackgroundImage( null );
 				container.update();
 			}
-			
+
 			currentImage = new Image( Display.getDefault(), ImageConvertor.getImageData( bi ) );
-		
+
 			Image zoomImage = ImageUtil.getScaledImage( currentImage, currentZoomRate );
 			canvas.setSize( zoomImage.getBounds().width, zoomImage.getBounds().height );
 			canvas.setBackgroundImage( zoomImage );
@@ -293,6 +313,7 @@ public class JZoomerWindow extends BasicWindow
 		toggleMonitorAction = new ToggleMonitorAction( this );
 		aboutAction = new AboutAction( this );
 		colorAction = new ColorAction( this );
+		trackerAction = new TrackerAction( this );
 	}
 
 	/**
@@ -306,6 +327,7 @@ public class JZoomerWindow extends BasicWindow
 		MenuManager menuManager = new MenuManager( "menu" );
 		menuManager.add( aboutAction );
 		menuManager.add( new Separator() );
+		menuManager.add( trackerAction );
 		menuManager.add( colorAction );
 		menuManager.add( new Separator() );
 		menuManager.add( zoomOutAction );
@@ -328,6 +350,7 @@ public class JZoomerWindow extends BasicWindow
 		MenuManager menuManager = new MenuManager( "menu" );
 		menuManager.add( aboutAction );
 		menuManager.add( new Separator() );
+		menuManager.add( trackerAction );
 		menuManager.add( colorAction );
 		menuManager.add( new Separator() );
 		menuManager.add( zoomOutAction );
@@ -357,6 +380,7 @@ public class JZoomerWindow extends BasicWindow
 		fileMenuManager.add( exitAction );
 
 		MenuManager operationMenuManager = new MenuManager( getMessage( "window.menu.operation" ) );
+		operationMenuManager.add( trackerAction );
 		operationMenuManager.add( colorAction );
 		operationMenuManager.add( new Separator() );
 		operationMenuManager.add( zoomOutAction );
@@ -410,7 +434,7 @@ public class JZoomerWindow extends BasicWindow
 			JZoomerWindow window = new JZoomerWindow();
 			window.setBlockOnOpen( true );
 			window.open();
-			Display.getCurrent().dispose();
+			window.getShell().dispose();
 		}
 		catch( Exception e )
 		{
@@ -431,11 +455,12 @@ public class JZoomerWindow extends BasicWindow
 		newShell.setImage( SWTResourceManager.getImage( JZoomerWindow.class, "/icons/magnifier.png" ) );
 		newShell.setSize( currentWidth, currentHeight );
 		newShell.setMinimumSize( JZoomerConstant.WINDOW_MIN_WIDTH, JZoomerConstant.WINDOW_MIN_HEIGHT );
-		
+
 	}
-	
+
 	private void setTransparent( Control control, int alpha )
 	{
+
 		OS.SetWindowLong( control.handle, OS.GWL_EXSTYLE, OS.GetWindowLong( control.handle, OS.GWL_EXSTYLE ) ^ 0x80000 );
 
 		TCHAR lpLibFileName = new TCHAR( 0, "User32.dll", true );
@@ -586,8 +611,17 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	public Image getCurrentImage()
 	{
-	
+
 		return currentImage;
+	}
+
+	/**
+	 * @return the tray
+	 */
+	public Tray getTray()
+	{
+	
+		return tray;
 	}
 
 }
