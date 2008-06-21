@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolTip;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
+import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.swtdesigner.ResourceManager;
@@ -106,7 +107,7 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void showColorInfo()
 	{
 
-		//System.out.println( "show color info" );
+		System.out.println( "show color info status:" + isStopped );
 		if( isStopped ) return;
 		Color color = getCurrentMouseLocationColor();
 		r = color.getRed();
@@ -123,19 +124,21 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		pickupColor();
 		// stop pickup color dynamically
 		isStopped = false;
-		// show color info in tray tooltip
-		tooltip.setMessage( getMessage( "action.color.tooltip.clip", getColorHtml() ) );
-		tooltip.setVisible( true );
+		if( JZoomerConstant.TRAY_MESSAGE_SHOW )
+		{// show color info in tray tooltip
+			tooltip.setMessage( getMessage( "action.color.tooltip.clip", getColorHtml() ) );
+			tooltip.setVisible( true );
+		}
 	}
 	public void mouseUp( MouseEvent e )
 	{
 		//toggle stop/start show color info
-		isStopped = !isStopped;
+		//isStopped = !isStopped;
 	}
 
 	public void mouseDown( MouseEvent e )
 	{
-
+		isStopped = !isStopped;
 		// if( e.stateMask == ( SWT.BUTTON1 | 'c')||e.stateMask == ( SWT.BUTTON1 | 'C' ) )
 		// {
 		// pickupColor( e );

@@ -6,6 +6,7 @@ package com.dextrys.trilogy.toolkit.jzoomer.logic.action;
 
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
@@ -44,6 +45,7 @@ public class ExitAction extends BasicAction
 				//dispose all SWT resources
 				SWTResourceManager.dispose();
 				window.getShell().dispose();
+				window.getTray().dispose();
 			}
 			else
 			{
@@ -59,6 +61,8 @@ public class ExitAction extends BasicAction
 			//dispose all SWT resources
 			SWTResourceManager.dispose();
 			window.getShell().dispose();
+			window.getTray().dispose();
+			//Display.getCurrent().dispose();
 		}
 			
 	}

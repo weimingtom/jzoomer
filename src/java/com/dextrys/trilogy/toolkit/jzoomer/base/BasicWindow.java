@@ -126,7 +126,7 @@ public class BasicWindow extends ApplicationWindow implements MouseMoveListener,
 		Control c = ( Control ) e.getSource();
 		if( e.stateMask == SWT.BUTTON1 )
 		{// move with mouse left button pressed
-			System.out.println( "Mouse move: Left button pressed" );
+			//System.out.println( "Mouse move: Left button pressed" );
 			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
 			{// top composite
 				c.setCursor( CURSOR_HAND );
@@ -137,7 +137,7 @@ public class BasicWindow extends ApplicationWindow implements MouseMoveListener,
 				c.setCursor( CURSOR_HAND );
 				moveShell();
 			}
-		} else if( e.stateMask == ( SWT.CTRL | SWT.BUTTON1 ) )
+		} else if( e.stateMask == ( SWT.CTRL | SWT.BUTTON1 ) ) 
 		{// move ctrl + mouse left button pressed
 			c.setCursor( CURSOR_HAND );
 			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
