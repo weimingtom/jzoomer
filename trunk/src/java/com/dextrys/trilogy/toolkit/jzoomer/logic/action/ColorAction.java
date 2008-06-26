@@ -107,7 +107,7 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void showColorInfo()
 	{
 
-		System.out.println( "show color info status:" + isStopped );
+		//System.out.println( "show color info status:" + isStopped );
 		if( isStopped ) return;
 		Color color = getCurrentMouseLocationColor();
 		r = color.getRed();

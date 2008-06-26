@@ -18,6 +18,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -78,12 +79,12 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 	private int getRealValue( int scaledValue, int zoomRate )
 	{
-
+		int realValue;
 		if( zoomRate == 0 )
-			return 0;
+			realValue = 0;
 		if( zoomRate == 1 )
 		{
-			return scaledValue;
+			realValue = scaledValue;
 		}
 		/*
 		 * For example: 
@@ -91,7 +92,8 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 		 * if the scaledValue is 9, zoomRate is 8, then the real value is ( 9 - 1 )/8 + 1 = 2
 		 * if the scaledValue is 4, zoomRate is -4, then the real value is -( 4 * (-4) = 16
 		 */
-		int realValue = ( zoomRate > 0 ) ? ( ( scaledValue - 1 ) / zoomRate + 1 ) : ( -( scaledValue * zoomRate ) );
+		realValue = ( zoomRate > 0 ) ? ( ( scaledValue - 1 ) / zoomRate + 1 ) : ( -( scaledValue * zoomRate ) );
+		
 		return realValue;
 	}
 
@@ -114,7 +116,7 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 	public void controlResized( ControlEvent e )
 	{
-
+		
 		if( isChecked() )
 		{
 			int rate = window.getCurrentZoomRate();
@@ -129,13 +131,18 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 			) );
 			tooltip.show( point );
 		}
-		// tooltip.setHideDelay( 50 );
+		
+		
 	}
 
 	public void mouseMove( MouseEvent e )
 	{
 
 		// System.out.println( "canvas mouse move" );
+		//TODO should have better solution!
+		Control c = (Control)e.getSource();
+		c.setCursor( window.CURSOR_CROSS );
+		
 		tooltip.hide();
 
 	}
@@ -152,7 +159,6 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 		if( isChecked() )
 		{
-
 			if( e.button == 1 && e.stateMask == SWT.None )
 			{
 				point = new Point( e.x, e.y );
@@ -163,7 +169,6 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 				} );
 				// tracker.setStippled( true );
 				tracker.open();
-				
 			}
 		}
 
