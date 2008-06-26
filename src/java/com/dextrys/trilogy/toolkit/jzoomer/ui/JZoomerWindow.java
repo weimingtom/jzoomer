@@ -197,7 +197,11 @@ public class JZoomerWindow extends BasicWindow
 		canvas = new Canvas( container, SWT.NONE );
 		canvas.setVisible( false );
 		canvas.setMenu( createPopupMenuManager().createContextMenu( container ) );
+		canvas.setCursor( CURSOR_CROSS );
 
+		// implement mouse drag
+		canvas.addMouseMoveListener( this );
+		canvas.addMouseListener( this );
 		// implement measure
 		canvas.addMouseListener( trackerAction );
 		canvas.addMouseMoveListener( trackerAction );
@@ -205,9 +209,6 @@ public class JZoomerWindow extends BasicWindow
 		canvas.addMouseListener( colorAction );
 		// canvas.addKeyListener( colorAction );
 		canvas.addMouseMoveListener( colorAction );
-		// implement mouse drag
-		canvas.addMouseMoveListener( this );
-		canvas.addMouseListener( this );
 		// when mouse move in or move, stop monitor
 		canvas.addMouseMoveListener( toggleMonitorAction );
 		canvas.addMouseTrackListener( toggleMonitorAction );
@@ -248,8 +249,8 @@ public class JZoomerWindow extends BasicWindow
 			// Convert capture Image from canvas backgroundImage to container backgroundImage
 			// container.setBackgroundImage( canvas.getBackgroundImage() );
 			canvas.setVisible( false );
-			colorAction.setChecked( false );
-			colorAction.run();
+			//colorAction.setChecked( false );
+			//colorAction.run();
 			timer.start();
 			if( canvas.getBackgroundImage() != null )
 			{
@@ -293,8 +294,8 @@ public class JZoomerWindow extends BasicWindow
 			canvas.setVisible( true );
 			System.out.println( container.getBackgroundImage() );
 			// show colorInfo panel
-			colorAction.setChecked( true );
-			colorAction.run();
+			//colorAction.setChecked( true );
+			//colorAction.run();
 		}
 	}
 
