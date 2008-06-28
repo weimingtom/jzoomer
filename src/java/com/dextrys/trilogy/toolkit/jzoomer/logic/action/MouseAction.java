@@ -4,7 +4,6 @@
  */
 package com.dextrys.trilogy.toolkit.jzoomer.logic.action;
 
-import org.eclipse.jface.window.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -16,9 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
-import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.dextrys.trilogy.util.swt.HotKeysManager;
 
