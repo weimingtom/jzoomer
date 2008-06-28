@@ -27,9 +27,9 @@ public class BasicWindow extends ApplicationWindow implements MouseMoveListener,
 	private Point location;			//Mouse Relative Location
 	private Cursor currentCursor;
 
-	public static final Cursor CURSOR_HAND = new Cursor( Display.getCurrent(), SWT.CURSOR_HAND );
-	public static final Cursor CURSOR_CROSS = new Cursor( Display.getCurrent(), SWT.CURSOR_CROSS );
-	public static final Cursor CURSOR_ARROW = new Cursor( Display.getCurrent(), SWT.CURSOR_ARROW );
+	public static final Cursor CURSOR_HAND = JZoomerConstant.CURSOR_HAND;
+	public static final Cursor CURSOR_CROSS = JZoomerConstant.CURSOR_CROSS;
+	public static final Cursor CURSOR_ARROW = JZoomerConstant.CURSOR_ARROW;
 
 	public BasicWindow()
 	{
