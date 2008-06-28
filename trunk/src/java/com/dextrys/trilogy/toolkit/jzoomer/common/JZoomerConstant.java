@@ -5,8 +5,12 @@ import java.awt.Robot;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Display;
 import com.dextrys.trilogy.util.SystemPropertiesReader;
+import com.dextrys.trilogy.util.swt.CursorsManager;
 
 /*
  * @author talent_marquis<甜菜侯爵> Email: talent_marquis@163.com Copyright (C) 2008 talent_marquis<甜菜侯爵>
@@ -23,6 +27,11 @@ public class JZoomerConstant
 	
 	public static Robot ROBOT = getRobot();
 	
+	public static final Cursor CURSOR_CHALK = CursorsManager.getCursor( "/icons/chalk.gif" );
+	public static final Cursor CURSOR_COLORPICKER = CursorsManager.getCursor( "/icons/colorpicker.gif" );
+	public static final Cursor CURSOR_HAND = new Cursor( Display.getCurrent(), SWT.CURSOR_HAND );
+	public static final Cursor CURSOR_CROSS = new Cursor( Display.getCurrent(), SWT.CURSOR_CROSS );
+	public static final Cursor CURSOR_ARROW = new Cursor( Display.getCurrent(), SWT.CURSOR_ARROW );
 	
 	public static final String VERSION = reader.getProperty( "version" );							// v1.01
 	public static final String AUTHOR = reader.getProperty( "author" );								// me
