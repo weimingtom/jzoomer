@@ -66,12 +66,12 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 		if( isChecked() )
 		{
-			canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
+			canvas.setCursor( JZoomerConstant.CURSOR_COLORPICKER );
 			canvas.setToolTipText( getMessage( "action.color.canvas.tooltip" ) );
 			toggleColorPick( true );
 		} else
 		{
-			canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
+			canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
 			canvas.setToolTipText( "" );
 			toggleColorPick( false );
 		}

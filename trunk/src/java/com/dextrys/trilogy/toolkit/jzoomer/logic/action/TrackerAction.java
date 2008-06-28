@@ -141,7 +141,7 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 		// System.out.println( "canvas mouse move" );
 		//TODO should have better solution!
 		Control c = (Control)e.getSource();
-		c.setCursor( window.CURSOR_CROSS );
+		//c.setCursor( window.CURSOR_CROSS );
 		
 		tooltip.hide();
 
