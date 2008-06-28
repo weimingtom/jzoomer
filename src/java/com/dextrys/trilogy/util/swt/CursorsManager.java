@@ -31,7 +31,28 @@ public class CursorsManager
 		Display display = Display.getDefault();
 		ImageData data = new ImageData( is );
 		if( data.transparentPixel > 0 )
-			return new Cursor( display, data, 0, 0 );
+		{
+			int hotsPotX = 0;
+			int hotsPotY = 0;
+			
+			searchHotsPot:
+			for( int i = 0; i < data.width; i ++ )
+			{
+				for( int j = 0; j < data.height; j ++ )
+				{
+					int pixel = data.getPixel( i, j );
+					if( pixel != data.transparentPixel )
+					{
+						hotsPotX = i; 
+						hotsPotY = j;
+						break searchHotsPot;
+					}
+				}
+			}
+				
+			return new Cursor( display, data, hotsPotX, hotsPotY );
+		}
+		
 		return new Cursor( display, data, 0, 0 );
 	}
 	

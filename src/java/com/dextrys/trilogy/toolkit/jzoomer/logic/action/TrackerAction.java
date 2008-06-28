@@ -58,17 +58,24 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 	public TrackerAction( JZoomerWindow w )
 	{
 
-		super( AS_CHECK_BOX );
+		super( AS_RADIO_BUTTON );
 		window = w;
-		setChecked( true );
+		setChecked( false );
 		setText( getMessage( "action.tracker.text" ) );
-		// setToolTipText( getMessage("action.exit.tooltip") );
+		setToolTipText( getMessage("action.tracker.tooltip") );
 		setImageDescriptor( ResourceManager.getImageDescriptor( TrackerAction.class, "/icons/measure.png" ) );
 	}
 
 	public void run()
 	{
-
+		if( isChecked() )
+		{
+			canvas.setCursor( JZoomerConstant.CURSOR_CROSS );
+			canvas.setToolTipText( getMessage( "action.tracker.tooltip" ) );
+		} else
+		{
+			canvas.setCursor( JZoomerConstant.CURSOR_CROSS );
+		}
 	}
 
 	private Point getTooltipLocation( Point point )
@@ -79,6 +86,7 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 	private int getRealValue( int scaledValue, int zoomRate )
 	{
+
 		int realValue;
 		if( zoomRate == 0 )
 			realValue = 0;
@@ -87,13 +95,12 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 			realValue = scaledValue;
 		}
 		/*
-		 * For example: 
-		 * if the scaledValue is 8, zoomRate is 8, then the real value is ( 8 - 1 )/8 + 1 = 1 
-		 * if the scaledValue is 9, zoomRate is 8, then the real value is ( 9 - 1 )/8 + 1 = 2
+		 * For example: if the scaledValue is 8, zoomRate is 8, then the real value is ( 8 - 1 )/8 +
+		 * 1 = 1 if the scaledValue is 9, zoomRate is 8, then the real value is ( 9 - 1 )/8 + 1 = 2
 		 * if the scaledValue is 4, zoomRate is -4, then the real value is -( 4 * (-4) = 16
 		 */
 		realValue = ( zoomRate > 0 ) ? ( ( scaledValue - 1 ) / zoomRate + 1 ) : ( -( scaledValue * zoomRate ) );
-		
+
 		return realValue;
 	}
 
@@ -116,7 +123,7 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 	public void controlResized( ControlEvent e )
 	{
-		
+
 		if( isChecked() )
 		{
 			int rate = window.getCurrentZoomRate();
@@ -124,26 +131,37 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 			Point realSize = new Point( getRealValue( rectangle.width, rate ), getRealValue( rectangle.height, rate ) );
 			// Point p = new Point( point.x + tracker.getRectangles()[ 0 ].width, point.y +
 			// tracker.getRectangles()[ 0 ].height );
+//			canvas.setToolTipText( getMessage( 
+//					"action.tracker.canvas.tooltip", 
+//					"" + rectangle.width, 
+//					"" + rectangle.height, 
+//					"" + realSize.x, 
+//					"" + realSize.y
+//			) );
 			tooltip.setText( getMessage( 
 					"action.tracker.canvas.tooltip", 
-					"" + rectangle.width, "" + rectangle.height, // scaled width and height
-					"" + realSize.x, "" + realSize.y // real width and height
+					"" + rectangle.width, 
+					"" + rectangle.height, 
+					"" + realSize.x, 
+					"" + realSize.y
 			) );
 			tooltip.show( point );
 		}
-		
-		
+
 	}
 
 	public void mouseMove( MouseEvent e )
 	{
 
-		// System.out.println( "canvas mouse move" );
-		//TODO should have better solution!
-		Control c = (Control)e.getSource();
-		//c.setCursor( window.CURSOR_CROSS );
-		
-		tooltip.hide();
+		if( isChecked() )
+		{
+			// System.out.println( "canvas mouse move" );
+			// TODO should have better solution!
+			Control c = ( Control ) e.getSource();
+			// c.setCursor( window.CURSOR_CROSS );
+
+			tooltip.hide();
+		}
 
 	}
 
@@ -176,13 +194,15 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 
 	public void mouseUp( MouseEvent e )
 	{
-
-		System.out.println( "tracker mouse up" );
-		// if( tracker != null )
-		// {
-		// tracker.close();
-		// }
-		// tooltip.hide();
+		if( isChecked() )
+		{
+			System.out.println( "tracker mouse up" );
+			// if( tracker != null )
+			// {
+			// tracker.close();
+			// }
+			// tooltip.hide();
+		}
 	}
 
 }

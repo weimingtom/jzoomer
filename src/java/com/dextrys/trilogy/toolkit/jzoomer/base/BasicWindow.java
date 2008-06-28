@@ -19,13 +19,9 @@ import com.dextrys.trilogy.util.swt.DisplayUtil;
  * 
  * @author marquis Modified Date:Jun 16, 2008
  */
-public class BasicWindow extends ApplicationWindow implements MouseMoveListener, MouseListener
+public class BasicWindow extends ApplicationWindow
 {
 	private static SourceBundlesReader reader;
-	//private int locationX = 0;
-	//private int locationY = 0;
-	private Point location;			//Mouse Relative Location
-	private Cursor currentCursor;
 
 	public static final Cursor CURSOR_HAND = JZoomerConstant.CURSOR_HAND;
 	public static final Cursor CURSOR_CROSS = JZoomerConstant.CURSOR_CROSS;
@@ -91,102 +87,6 @@ public class BasicWindow extends ApplicationWindow implements MouseMoveListener,
 	{
 
 		DisplayUtil.setWidgetAtCenter( control );
-	}
-
-	private void moveShell()
-	{
-		int mouseX = Display.getDefault().getCursorLocation().x;
-		int mouseY = Display.getDefault().getCursorLocation().y;
-		getShell().setLocation( mouseX - location.x, mouseY - location.y );
-	}
-
-	private void moveInParent( MouseEvent e )
-	{
-		Control c = ( Control ) e.getSource();
-		int mouseX = e.x + c.getLocation().x;
-		int mouseY = e.y + c.getLocation().y;
-		c.setLocation( mouseX - location.x, mouseY - location.y );
-	}
-
-	private Point getMouseRelativeLocation()
-	{
-
-		int mouseX = Display.getDefault().getCursorLocation().x;
-		int mouseY = Display.getDefault().getCursorLocation().y;
-		int shellX = getShell().getLocation().x;
-		int shellY = getShell().getLocation().y;
-		return new Point( mouseX - shellX, mouseY - shellY );
-	}
-
-	// ====================Mouse Listener========================
-	public void mouseMove( MouseEvent e )
-	{
-
-		// when mouse move with left button pressed, implement move-following-mouse moving
-		Control c = ( Control ) e.getSource();
-		if( e.stateMask == SWT.BUTTON1 )
-		{// move with mouse left button pressed
-			//System.out.println( "Mouse move: Left button pressed" );
-			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
-			{// top composite
-				c.setCursor( CURSOR_HAND );
-				moveShell();
-
-			} else
-			{// other widgets
-				c.setCursor( CURSOR_HAND );
-				moveShell();
-			}
-		} else if( e.stateMask == ( SWT.CTRL | SWT.BUTTON1 ) ) 
-		{// move ctrl + mouse left button pressed
-			c.setCursor( CURSOR_HAND );
-			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
-			{// top composite
-			} else
-			{// other widgets
-				moveInParent( e );
-			}
-		}
-	}
-
-	public void mouseDown( MouseEvent e )
-	{
-		Control c = ( Control ) e.getSource();
-		currentCursor = c.getCursor();
-		if( e.button == 1 && e.stateMask == SWT.None )
-		{// press down mouse left button
-			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
-			{// top composite
-				c.setCursor( CURSOR_HAND );
-				location = getMouseRelativeLocation();
-			} else
-			{// other widgets
-				c.setCursor( CURSOR_HAND );
-				location = getMouseRelativeLocation();
-			}
-		} else if( e.button == 1 && e.stateMask == SWT.CTRL )
-		{// press down ctrl + mouse left button
-			if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
-			{// top composite
-			} else
-			{// other widgets
-				c.setCursor( CURSOR_HAND );
-				location = new Point( e.x, e.y );
-			}
-		}
-	}
-
-	public void mouseUp( MouseEvent e )
-	{
-		//Restore cursor
-		Control c = ( Control ) e.getSource();
-		c.setCursor( currentCursor );
-		// c.setCursor( CURSOR_ARROW );
-	}
-
-	public void mouseDoubleClick( MouseEvent e )
-	{
-
 	}
 
 }

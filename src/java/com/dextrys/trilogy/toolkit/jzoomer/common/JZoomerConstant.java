@@ -35,7 +35,7 @@ public class JZoomerConstant
 	
 	public static final String VERSION = reader.getProperty( "version" );							// v1.01
 	public static final String AUTHOR = reader.getProperty( "author" );								// me
-	
+	//init window
 	public static final int ZOOM_RATE_MIN = reader.getIntegerProperty( "zoom.rate.min" ); 			// 1
 	public static final int ZOOM_RATE_MAX = reader.getIntegerProperty( "zoom.rate.max" ); 			// 8
 	public static final int ZOOM_RATE_DEFAULT = reader.getIntegerProperty( "zoom.rate.default" ); 	// 2
@@ -44,8 +44,11 @@ public class JZoomerConstant
 	public static final int WINDOW_MIN_WIDTH = reader.getIntegerProperty( "min.width" );			// 200
 	public static final int WINDOW_MIN_HEIGHT = reader.getIntegerProperty( "min.height" );			// 150
 	public static final int IMAGE_SCALE_TYPE = reader.getIntegerProperty( "image.scale.type" );		// 1
-	
+
 	public static final Color BACKGROUND_COLOR_DEFAULT = reader.getColorProperty( "background.color" );
+	//chalk
+	public static final int CHALK_DEFAULT_SIZE = reader.getIntegerProperty( "chalk.default.size" );		//1
+	public static final Color CHALK_DEFAULT_COLOR = reader.getColorProperty( "chalk.default.color" );	//255,0,0
 	
 	public static final Locale LOCALE = ( "".equals( reader.getProperty( "locale" ) ) ) ? null : new Locale( reader.getProperty( "locale" ) );
 	
@@ -54,6 +57,7 @@ public class JZoomerConstant
 	public static final boolean ALWAYS_ON_TOP = reader.getBooleanProperty( "on_top" );					// true
 	public static final boolean EXIT_CONFIRM = reader.getBooleanProperty( "exit.confirm" );				// false
 	public static final boolean TRAY_MESSAGE_SHOW = reader.getBooleanProperty( "tray.message.show" );	//true
+	
 
 	public static Robot getRobot()
 	{

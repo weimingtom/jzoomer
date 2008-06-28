@@ -28,7 +28,7 @@ import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
 
 public class ColorAction extends BasicAction implements MouseListener, MouseMoveListener// ,
-																						// KeyListener
+// KeyListener
 {
 	private static final String Control = null;
 	private JZoomerWindow window;
@@ -41,11 +41,11 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 	private static Clipboard clipboard = new Clipboard( Display.getCurrent() );
 	private static TextTransfer text_transfer = TextTransfer.getInstance();
-	
+
 	public ColorAction( JZoomerWindow w )
 	{
 
-		super( AS_CHECK_BOX );
+		super( AS_RADIO_BUTTON );
 		window = w;
 		try
 		{
@@ -80,18 +80,25 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void pickupColor()
 	{
 
-		//System.out.println( "pick up color" );
+		// System.out.println( "pick up color" );
 		Color color = getCurrentMouseLocationColor();
 		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
 		String cHtml = getColorHtml();
-		
-		//save color info into clipboard
-		clipboard.setContents( new Object[]{ cHtml }, new Transfer[]{ text_transfer } );
-		
+
+		// save color info into clipboard
+		clipboard.setContents( new Object[]
+		{
+			cHtml
+		}, new Transfer[]
+		{
+			text_transfer
+		} );
+
 	}
-	
+
 	public String getColorHtml()
 	{
+
 		return colorInfoGroup.getColorHtml();
 	}
 
@@ -107,8 +114,9 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	private void showColorInfo()
 	{
 
-		//System.out.println( "show color info status:" + isStopped );
-		if( isStopped ) return;
+		// System.out.println( "show color info status:" + isStopped );
+		if( isStopped )
+			return;
 		Color color = getCurrentMouseLocationColor();
 		r = color.getRed();
 		g = color.getGreen();
@@ -120,52 +128,65 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	public void mouseDoubleClick( MouseEvent e )
 	{
 
-		// pickup color immediately
-		pickupColor();
-		// stop pickup color dynamically
-		isStopped = false;
-		if( JZoomerConstant.TRAY_MESSAGE_SHOW )
-		{// show color info in tray tooltip
-			tooltip.setMessage( getMessage( "action.color.tooltip.clip", getColorHtml() ) );
-			tooltip.setVisible( true );
+		if( isChecked() )
+		{
+			// pickup color immediately
+			pickupColor();
+			// stop pickup color dynamically
+			isStopped = false;
+			if( JZoomerConstant.TRAY_MESSAGE_SHOW )
+			{// show color info in tray tooltip
+				tooltip.setMessage( getMessage( "action.color.tooltip.clip", getColorHtml() ) );
+				tooltip.setVisible( true );
+			}
 		}
 	}
 	public void mouseUp( MouseEvent e )
 	{
-		//toggle stop/start show color info
-		//isStopped = !isStopped;
+
+		// toggle stop/start show color info
+		// isStopped = !isStopped;
 	}
 
 	public void mouseDown( MouseEvent e )
 	{
-		isStopped = !isStopped;
-		// if( e.stateMask == ( SWT.BUTTON1 | 'c')||e.stateMask == ( SWT.BUTTON1 | 'C' ) )
-		// {
-		// pickupColor( e );
-		// }
-		
+
+		if( isChecked() )
+		{
+			isStopped = !isStopped;
+			// if( e.stateMask == ( SWT.BUTTON1 | 'c')||e.stateMask == ( SWT.BUTTON1 | 'C' ) )
+			// {
+			// pickupColor( e );
+			// }
+		}
+
 	}
 
 	public void mouseMove( MouseEvent e )
 	{
 
-		// System.out.println( e.stateMask );
-		if( isHotKeyPressed )
+		if( isChecked() )
 		{
-			showColorInfo();
+			// System.out.println( e.stateMask );
+			if( isHotKeyPressed )
+			{
+				showColorInfo();
+			}
 		}
 
 	}
-
 	public void keyPressed( KeyEvent e )
 	{
 
-		// if( e.keyCode == 'c' || e.keyCode == 'C' )
-		// {
-		// System.out.println( "c pressed" );
-		// canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
-		// toggleColorPick( true );
-		// }
+		if( isChecked() )
+		{
+			// if( e.keyCode == 'c' || e.keyCode == 'C' )
+			// {
+			// System.out.println( "c pressed" );
+			// canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
+			// toggleColorPick( true );
+			// }
+		}
 	}
 
 	private void toggleColorPick( boolean flag )
@@ -179,12 +200,15 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	public void keyReleased( KeyEvent e )
 	{
 
-		// if( e.keyCode == 'c' || e.keyCode == 'C' )
-		// {
-		// System.out.println( "c released" );
-		// canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
-		// toggleColorPick( false );
-		// }
+		if( isChecked() )
+		{
+			// if( e.keyCode == 'c' || e.keyCode == 'C' )
+			// {
+			// System.out.println( "c released" );
+			// canvas.setCursor( JZoomerWindow.CURSOR_ARROW );
+			// toggleColorPick( false );
+			// }
+		}
 	}
 
 	/**
@@ -204,11 +228,12 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	}
 
 	/**
-	 * @param tooltip the tooltip to set
+	 * @param tooltip
+	 *            the tooltip to set
 	 */
 	public void setTooltip( ToolTip tooltip )
 	{
-	
+
 		this.tooltip = tooltip;
 	}
 }
