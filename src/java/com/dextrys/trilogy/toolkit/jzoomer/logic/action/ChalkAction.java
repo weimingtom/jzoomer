@@ -29,8 +29,7 @@ import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
 
-public class ChalkAction extends BasicAction implements MouseMoveListener, MouseListener, ControlListener// ,
-// Listener
+public class ChalkAction extends BasicAction implements MouseMoveListener, MouseListener, ControlListener
 {
 	private JZoomerWindow window;
 	private Tracker tracker;
@@ -60,14 +59,22 @@ public class ChalkAction extends BasicAction implements MouseMoveListener, Mouse
 
 		super( AS_CHECK_BOX );
 		window = w;
-		setChecked( true );
-		setText( getMessage( "action.tracker.text" ) );
-		// setToolTipText( getMessage("action.exit.tooltip") );
-		setImageDescriptor( ResourceManager.getImageDescriptor( ChalkAction.class, "/icons/measure.png" ) );
+		setChecked( false );
+		setText( getMessage( "action.chalk.text" ) );
+		setToolTipText( getMessage("action.chalk.tooltip") );
+		setImageDescriptor( ResourceManager.getImageDescriptor( ChalkAction.class, "/icons/chalk.gif" ) );
 	}
 
 	public void run()
 	{
+		if( isChecked() )
+		{
+			canvas.setCursor( JZoomerConstant.CURSOR_CHALK );
+		}
+		else
+		{
+			canvas.setCursor( JZoomerConstant.CURSOR_CROSS );
+		}
 
 	}
 
