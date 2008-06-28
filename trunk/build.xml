@@ -7,7 +7,7 @@
 	 ========================================================================
 	-->
 	<property name="project.name" value="jZoomer" />
-	<property name="project.version" value="v1.2.1" />
+	<property name="project.version" value="v1.3.0" />
 	<property name="project.mainclass" value="com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow" />
 	<property name="project.encoding" value="utf-8" />
 	<property name="debuglevel" value="source,lines,vars" />

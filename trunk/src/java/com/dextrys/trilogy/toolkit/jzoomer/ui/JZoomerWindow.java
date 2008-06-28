@@ -38,6 +38,7 @@ import com.dextrys.trilogy.toolkit.jzoomer.base.BasicWindow;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.AboutAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.AlwaysOnTopAction;
+import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ChalkAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ColorAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ExitAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.MouseAction;
@@ -61,13 +62,14 @@ public class JZoomerWindow extends BasicWindow
 	private ExitAction exitAction;
 	private ShowAction showAction;
 	// private AlwaysOnTopAction alwaysOnTopAction;
-	// private MouseAction mouseAction;
+	private MouseAction mouseAction;
 	private ZoomAction zoomInAction;
 	private ZoomAction zoomOutAction;
 	private ToggleMonitorAction toggleMonitorAction;
 	private AboutAction aboutAction;
 	private ColorAction colorAction;
 	private TrackerAction trackerAction;
+	private ChalkAction chalkAction;
 
 	private int currentWidth = JZoomerConstant.WINDOW_INIT_WIDTH;
 	private int currentHeight = JZoomerConstant.WINDOW_INIT_HEIGHT;
@@ -155,7 +157,6 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	protected Control createContents( Composite parent )
 	{
-
 		container = new Composite( parent, SWT.NONE );
 		container.setBackground( backgroundColor );
 		container.setBackgroundMode( SWT.INHERIT_DEFAULT );
@@ -165,13 +166,14 @@ public class JZoomerWindow extends BasicWindow
 		container.setMenu( createPopupMenuManager().createContextMenu( container ) );
 
 		// implement mouse drag
-		container.addMouseMoveListener( this );
-		container.addMouseListener( this );
+		container.addMouseMoveListener( mouseAction );
+		container.addMouseListener( mouseAction );
 		// when mouse move in or move, stop monitor
 		container.addMouseMoveListener( toggleMonitorAction );
 		container.addMouseTrackListener( toggleMonitorAction );
 
 		container.addMouseWheelListener( zoomInAction );
+		
 		container.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
 
 		container.addControlListener( new ControlAdapter()
@@ -191,17 +193,22 @@ public class JZoomerWindow extends BasicWindow
 		//setTransparent( colorInfoGroup, 125 );
 		colorInfoGroup.setVisible( false );
 		// implement mouse drag
-		colorInfoGroup.addMouseMoveListener( this );
-		colorInfoGroup.addMouseListener( this );
+		colorInfoGroup.addMouseMoveListener( mouseAction );
+		colorInfoGroup.addMouseListener( mouseAction );
 
 		canvas = new Canvas( container, SWT.NONE );
 		canvas.setVisible( false );
 		canvas.setMenu( createPopupMenuManager().createContextMenu( container ) );
 		canvas.setCursor( CURSOR_CROSS );
+		canvas.setFocus();
 
 		// implement mouse drag
-		canvas.addMouseMoveListener( this );
-		canvas.addMouseListener( this );
+		canvas.addMouseMoveListener( mouseAction );
+		canvas.addMouseListener( mouseAction );
+		// implement chalk
+		canvas.addMouseListener( chalkAction );
+		canvas.addMouseMoveListener( chalkAction );
+		canvas.addKeyListener( chalkAction );
 		// implement measure
 		canvas.addMouseListener( trackerAction );
 		canvas.addMouseMoveListener( trackerAction );
@@ -225,6 +232,9 @@ public class JZoomerWindow extends BasicWindow
 		
 		initTray();
 
+		chalkAction.setCanvas( canvas );
+		chalkAction.run();
+		
 		zoomInAction.setCanvas( canvas );
 		zoomOutAction.setCanvas( canvas );
 		
@@ -251,6 +261,7 @@ public class JZoomerWindow extends BasicWindow
 			canvas.setVisible( false );
 			//colorAction.setChecked( false );
 			//colorAction.run();
+			chalkAction.setEnabled( false );
 			timer.start();
 			if( canvas.getBackgroundImage() != null )
 			{
@@ -292,7 +303,8 @@ public class JZoomerWindow extends BasicWindow
 			canvas.setBackgroundImage( zoomImage );
 			DisplayUtil.setWidgetAtCenter( canvas );
 			canvas.setVisible( true );
-			System.out.println( container.getBackgroundImage() );
+			
+			chalkAction.setEnabled( true );
 			// show colorInfo panel
 			//colorAction.setChecked( true );
 			//colorAction.run();
@@ -308,13 +320,14 @@ public class JZoomerWindow extends BasicWindow
 		showAction = new ShowAction( this );
 		exitAction = new ExitAction( this );
 		// alwaysOnTopAction = new AlwaysOnTopAction( this );
-		// mouseAction = new MouseAction( this );
+		mouseAction = new MouseAction( this );
 		zoomInAction = new ZoomAction( this, ZoomAction.TYPE_ZOOM_IN );
 		zoomOutAction = new ZoomAction( this, ZoomAction.TYPE_ZOOM_OUT );
 		toggleMonitorAction = new ToggleMonitorAction( this );
 		aboutAction = new AboutAction( this );
 		colorAction = new ColorAction( this );
 		trackerAction = new TrackerAction( this );
+		chalkAction = new ChalkAction( this );
 	}
 
 	/**
@@ -328,6 +341,7 @@ public class JZoomerWindow extends BasicWindow
 		MenuManager menuManager = new MenuManager( "menu" );
 		menuManager.add( aboutAction );
 		menuManager.add( new Separator() );
+		menuManager.add( chalkAction );
 		menuManager.add( trackerAction );
 		menuManager.add( colorAction );
 		menuManager.add( new Separator() );
@@ -351,6 +365,7 @@ public class JZoomerWindow extends BasicWindow
 		MenuManager menuManager = new MenuManager( "menu" );
 		menuManager.add( aboutAction );
 		menuManager.add( new Separator() );
+		menuManager.add( chalkAction );
 		menuManager.add( trackerAction );
 		menuManager.add( colorAction );
 		menuManager.add( new Separator() );
@@ -381,6 +396,7 @@ public class JZoomerWindow extends BasicWindow
 		fileMenuManager.add( exitAction );
 
 		MenuManager operationMenuManager = new MenuManager( getMessage( "window.menu.operation" ) );
+		operationMenuManager.add( chalkAction );
 		operationMenuManager.add( trackerAction );
 		operationMenuManager.add( colorAction );
 		operationMenuManager.add( new Separator() );
@@ -623,6 +639,24 @@ public class JZoomerWindow extends BasicWindow
 	{
 	
 		return tray;
+	}
+
+	/**
+	 * @return the trackerAction
+	 */
+	public TrackerAction getTrackerAction()
+	{
+	
+		return trackerAction;
+	}
+
+	/**
+	 * @return the chalkAction
+	 */
+	public ChalkAction getChalkAction()
+	{
+	
+		return chalkAction;
 	}
 
 }
