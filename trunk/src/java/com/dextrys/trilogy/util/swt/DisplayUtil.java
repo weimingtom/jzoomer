@@ -9,6 +9,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.internal.win32.OS;
+import org.eclipse.swt.internal.win32.TCHAR;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -63,6 +65,30 @@ public class DisplayUtil
 		control.setLocation( ( parentWidth - control.getSize().x ) / 2, ( parentHeight - control.getSize().y ) / 2 );
 	}
 	
+	public static void setTransparent( Control control, int alpha )
+	{
+
+		OS.SetWindowLong( control.handle, OS.GWL_EXSTYLE, OS.GetWindowLong( control.handle, OS.GWL_EXSTYLE ) ^ 0x80000 );
+
+		TCHAR lpLibFileName = new TCHAR( 0, "User32.dll", true );
+		int hInst = OS.LoadLibrary( lpLibFileName );
+		if( hInst != 0 )
+		{
+			String name = "SetLayeredWindowAttributes\0";
+			byte[] lpProcName = new byte[ name.length() ];
+			for( int i = 0; i < lpProcName.length; i++ )
+			{
+				lpProcName[ i ] = ( byte ) name.charAt( i );
+			}
+			final int fun = OS.GetProcAddress( hInst, lpProcName );
+			if( fun != 0 )
+			{
+
+				OS.CallWindowProc( fun, control.handle, 0, 200, 2 );
+			}
+			OS.FreeLibrary( hInst );
+		}
+	}
 
 	public static Point getMouseLocationInParent( MouseEvent e )
 	{

@@ -1,4 +1,4 @@
-package com.dextrys.trilogy.toolkit.jzoomer.base;
+package com.dextrys.trilogy.toolkit.jzoomer.ui;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Image;
