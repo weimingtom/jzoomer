@@ -82,7 +82,7 @@ public class MouseAction extends BasicAction implements MouseMoveListener, Mouse
 			{
 				if( window.getTrackerAction().isChecked() || window.getChalkAction().isChecked() )
 				{
-					System.out.println( "MouseAction: Don't move!");					
+					//System.out.println( "MouseAction: Don't move!");					
 				}
 				else
 				{

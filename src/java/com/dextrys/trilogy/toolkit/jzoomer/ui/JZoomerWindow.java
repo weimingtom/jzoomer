@@ -475,31 +475,6 @@ public class JZoomerWindow extends BasicWindow
 
 	}
 
-	private void setTransparent( Control control, int alpha )
-	{
-
-		OS.SetWindowLong( control.handle, OS.GWL_EXSTYLE, OS.GetWindowLong( control.handle, OS.GWL_EXSTYLE ) ^ 0x80000 );
-
-		TCHAR lpLibFileName = new TCHAR( 0, "User32.dll", true );
-		int hInst = OS.LoadLibrary( lpLibFileName );
-		if( hInst != 0 )
-		{
-			String name = "SetLayeredWindowAttributes\0";
-			byte[] lpProcName = new byte[ name.length() ];
-			for( int i = 0; i < lpProcName.length; i++ )
-			{
-				lpProcName[ i ] = ( byte ) name.charAt( i );
-			}
-			final int fun = OS.GetProcAddress( hInst, lpProcName );
-			if( fun != 0 )
-			{
-
-				OS.CallWindowProc( fun, control.handle, 0, 200, 2 );
-			}
-			OS.FreeLibrary( hInst );
-		}
-	}
-
 	/**
 	 * When press the close button on the frame, hidden it into the tray
 	 */
