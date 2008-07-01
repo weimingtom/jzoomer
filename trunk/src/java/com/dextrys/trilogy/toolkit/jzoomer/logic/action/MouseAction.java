@@ -78,7 +78,7 @@ public class MouseAction extends BasicAction implements MouseMoveListener, Mouse
 			{// top composite
 				//c.setCursor( JZoomerConstant.CURSOR_HAND );
 				moveShell();
-			}else if( e.getSource() instanceof Canvas )
+			}else if( e.getSource() == window.getCanvasContainer() )
 			{
 				if( window.getTrackerAction().isChecked() || window.getChalkAction().isChecked() )
 				{

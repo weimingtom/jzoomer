@@ -1,10 +1,9 @@
 package com.dextrys.trilogy.toolkit.jzoomer.ui;
 
-import java.awt.AWTException;
-import java.awt.Button;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import javax.swing.Timer;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
@@ -15,19 +14,14 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.internal.win32.OS;
-import org.eclipse.swt.internal.win32.TCHAR;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolTip;
@@ -37,7 +31,6 @@ import org.eclipse.swt.widgets.TrayItem;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicWindow;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.AboutAction;
-import com.dextrys.trilogy.toolkit.jzoomer.logic.action.AlwaysOnTopAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ChalkAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ColorAction;
 import com.dextrys.trilogy.toolkit.jzoomer.logic.action.ExitAction;
@@ -50,7 +43,6 @@ import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.dextrys.trilogy.util.swt.ImageConvertor;
 import com.dextrys.trilogy.util.swt.ImageUtil;
 import com.swtdesigner.SWTResourceManager;
-import javax.swing.Timer;
 
 /*
  * @author talent_marquis<��˺��> Email: talent_marquis@163.com Copyright (C) 2008 talent_marquis<��˺��>
@@ -82,9 +74,10 @@ public class JZoomerWindow extends BasicWindow
 
 	private Tray tray;
 	private TrayItem trayItem;
-	private Canvas canvas;
-	private ColorInfoGroup colorInfoGroup;
 	private Composite container;
+	private ColorInfoGroup colorInfoGroup;
+	private ImageComposite canvasContainer;
+	//private Canvas canvas;
 	private Timer timer;
 	private Image currentImage;
 
@@ -131,24 +124,24 @@ public class JZoomerWindow extends BasicWindow
 		trayItem.setToolTip( tooltip );
 		final Menu menu = createTrayMenuManager().createContextMenu( getShell() );
 		trayItem.addMenuDetectListener( new MenuDetectListener()
+		{
+			public void menuDetected( MenuDetectEvent e )
 			{
-				public void menuDetected( MenuDetectEvent e )
-				{
-					menu.setVisible( true );
-				}
-			} 
-		);
-		
-		trayItem.addSelectionListener( new SelectionAdapter() 
-			{
-				public void widgetSelected( SelectionEvent e )
-				{
-					//System.out.println( "trayItem selected");
-					showAction.run();
-				}
-				
+
+				menu.setVisible( true );
 			}
-		);
+		} );
+
+		trayItem.addSelectionListener( new SelectionAdapter()
+		{
+			public void widgetSelected( SelectionEvent e )
+			{
+
+				// System.out.println( "trayItem selected");
+				showAction.run();
+			}
+
+		} );
 	}
 	/**
 	 * Create contents of the application window
@@ -157,13 +150,15 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	protected Control createContents( Composite parent )
 	{
+
 		container = new Composite( parent, SWT.NONE );
 		container.setBackground( backgroundColor );
-		container.setBackgroundMode( SWT.INHERIT_DEFAULT );
-		// container.setLayout( new FillLayout() );
-		// canvas = new Canvas( container, SWT.NONE );
+		// container.setBackgroundMode( SWT.INHERIT_FORCE );
 
-		container.setMenu( createPopupMenuManager().createContextMenu( container ) );
+		Menu popupMenu = createPopupMenuManager().createContextMenu( container );
+
+		// container.setLayout( new FillLayout() );
+		container.setMenu( popupMenu );
 
 		// implement mouse drag
 		container.addMouseMoveListener( mouseAction );
@@ -173,9 +168,8 @@ public class JZoomerWindow extends BasicWindow
 		container.addMouseTrackListener( toggleMonitorAction );
 
 		container.addMouseWheelListener( zoomInAction );
-		
-		container.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
 
+		container.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
 		container.addControlListener( new ControlAdapter()
 		{
 			public void controlResized( ControlEvent e )
@@ -183,69 +177,107 @@ public class JZoomerWindow extends BasicWindow
 
 				if( getTimer().isRunning() == false )
 				{
-					setWidgetAtComponiteCenter( canvas );
+					setWidgetAtComponiteCenter( canvasContainer );
 				}
 			}
 
 		} );
 
 		colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
-		//setTransparent( colorInfoGroup, 125 );
+		// setTransparent( colorInfoGroup, 125 );
 		colorInfoGroup.setVisible( false );
 		// implement mouse drag
 		colorInfoGroup.addMouseMoveListener( mouseAction );
 		colorInfoGroup.addMouseListener( mouseAction );
+		// colorAction.setCanvas( canvas );
+		colorAction.setColorInfoGroup( colorInfoGroup );
 
-		canvas = new Canvas( container, SWT.NONE );
-		canvas.setVisible( false );
-		canvas.setMenu( createPopupMenuManager().createContextMenu( container ) );
-		canvas.setCursor( CURSOR_CROSS );
-		canvas.setFocus();
+		canvasContainer = new ImageComposite( container, SWT.NONE );
+		canvasContainer.setBackgroundMode( SWT.INHERIT_FORCE );
+		canvasContainer.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
+		canvasContainer.setImageDisplayMode( ImageComposite.CENTRE );
+		canvasContainer.setMenu( popupMenu );
+		canvasContainer.setCursor( JZoomerConstant.CURSOR_CHALK );
+		// canvasContainer.setLocation( 0,0 );
+		canvasContainer.setFocus();
+		canvasContainer.setVisible( false );
 
 		// implement mouse drag
-		canvas.addMouseMoveListener( mouseAction );
-		canvas.addMouseListener( mouseAction );
+		canvasContainer.addMouseMoveListener( mouseAction );
+		canvasContainer.addMouseListener( mouseAction );
 		// implement chalk
-		canvas.addMouseListener( chalkAction );
-		canvas.addMouseMoveListener( chalkAction );
-		canvas.addKeyListener( chalkAction );
+		canvasContainer.addMouseListener( chalkAction );
+		canvasContainer.addMouseMoveListener( chalkAction );
+		canvasContainer.addKeyListener( chalkAction );
+		//canvasContainer.addPaintListener( chalkAction );
 		// implement measure
-		canvas.addMouseListener( trackerAction );
-		canvas.addMouseMoveListener( trackerAction );
+		canvasContainer.addMouseListener( trackerAction );
+		canvasContainer.addMouseMoveListener( trackerAction );
 		// implement color pick-up
-		canvas.addMouseListener( colorAction );
+		canvasContainer.addMouseListener( colorAction );
 		// canvas.addKeyListener( colorAction );
-		canvas.addMouseMoveListener( colorAction );
+		canvasContainer.addMouseMoveListener( colorAction );
 		// when mouse move in or move, stop monitor
-		canvas.addMouseMoveListener( toggleMonitorAction );
-		canvas.addMouseTrackListener( toggleMonitorAction );
-		
+		canvasContainer.addMouseMoveListener( toggleMonitorAction );
+		canvasContainer.addMouseTrackListener( toggleMonitorAction );
+
+		// canvas = new Canvas( canvasContainer, SWT.NONE );
+		// // canvas.setVisible( true );
+		// canvas.setMenu( popupMenu );
+		// canvas.setCursor( JZoomerConstant.CURSOR_CHALK );
+		// // canvas.setFocus();
+		//
+		// // // implement mouse drag
+		// canvas.addMouseMoveListener( mouseAction );
+		// canvas.addMouseListener( mouseAction );
+		// // implement chalk
+		// canvas.addMouseListener( chalkAction );
+		// canvas.addMouseMoveListener( chalkAction );
+		// canvas.addKeyListener( chalkAction );
+
+		// // implement chalk
+		// canvas.addMouseListener( chalkAction );
+		// canvas.addMouseMoveListener( chalkAction );
+		// canvas.addKeyListener( chalkAction );
+		// // implement measure
+		// canvas.addMouseListener( trackerAction );
+		// canvas.addMouseMoveListener( trackerAction );
+		// // implement color pick-up
+		// canvas.addMouseListener( colorAction );
+		// // canvas.addKeyListener( colorAction );
+		// canvas.addMouseMoveListener( colorAction );
+		// // when mouse move in or move, stop monitor
+		// canvas.addMouseMoveListener( toggleMonitorAction );
+		// canvas.addMouseTrackListener( toggleMonitorAction );
 
 		tooltip = new ToolTip( getShell(), SWT.BALLOON | SWT.ICON_INFORMATION );
 		tooltip.setText( getMessage( "window.tooltip.title" ) );
 		tooltip.setAutoHide( true );
 
 		// tracker = new Tracker( getShell().getDisplay(), SWT.RESIZE );
-		tracker = new Tracker( canvas, SWT.RESIZE );
+		tracker = new Tracker( canvasContainer, SWT.RESIZE );
 		tracker.addControlListener( trackerAction );
 		// tracker.setStippled( true );
-		
-		initTray();
 
-		chalkAction.setCanvas( canvas );
-		chalkAction.run();
-		
-		zoomInAction.setCanvas( canvas );
-		zoomOutAction.setCanvas( canvas );
-		
-		colorAction.setCanvas( canvas );
-		colorAction.setColorInfoGroup( colorInfoGroup );
+		initTray();
+		chalkAction.setCanvasContainer( canvasContainer );
+		//chalkAction.setCanvas( canvas );
+
+		zoomInAction.setCanvasContainer( canvasContainer );
+		zoomOutAction.setCanvasContainer( canvasContainer );
+		// zoomInAction.setCanvas( canvas );
+		// zoomOutAction.setCanvas( canvas );
+
+		colorAction.setCanvasContainer( canvasContainer );
 		colorAction.setTooltip( tooltip );
-		
+
 		showAction.setTooltip( tooltip );
-				
-		trackerAction.setCanvas( canvas );
+
+		trackerAction.setCanvasContainer( canvasContainer );
+		// trackerAction.setCanvas( canvas );
 		trackerAction.setTracker( tracker );
+
+		// trackerAction.setEnabled( true );
 
 		return container;
 	}
@@ -258,24 +290,29 @@ public class JZoomerWindow extends BasicWindow
 			System.out.println( "invoke toggle on " );
 			// Convert capture Image from canvas backgroundImage to container backgroundImage
 			// container.setBackgroundImage( canvas.getBackgroundImage() );
-			canvas.setVisible( false );
-			//colorAction.setChecked( false );
-			//colorAction.run();
+			canvasContainer.setVisible( false );
+			// colorAction.setChecked( false );
+			// colorAction.run();
 			chalkAction.setEnabled( false );
 			timer.start();
-			if( canvas.getBackgroundImage() != null )
+
+			if( canvasContainer.getBackgroundImage() != null )
 			{
-				canvas.setBackgroundImage( null );
+				canvasContainer.setBackgroundImage( null );
 			}
+			// if( canvas.getBackgroundImage() != null )
+			// {
+			// canvas.setBackgroundImage( null );
+			// }
 			if( currentImage != null )
 			{
-				currentImage = null;
+				currentImage.dispose();// = null;
 			}
 
 		} else
 		{
 			System.out.println( "invoke toggle off" );
-			container.setBackground( backgroundColor );
+			// container.setBackground( backgroundColor );
 			// capture current image and put it into canvas
 			Point mouseLocation = Display.getDefault().getCursorLocation();
 			int currentWidth = container.getSize().x;
@@ -293,21 +330,24 @@ public class JZoomerWindow extends BasicWindow
 			{
 				container.getBackgroundImage().dispose();
 				container.setBackgroundImage( null );
-				container.update();
+				// container.update();
 			}
 
 			currentImage = new Image( Display.getDefault(), ImageConvertor.getImageData( bi ) );
 
 			Image zoomImage = ImageUtil.getScaledImage( currentImage, currentZoomRate );
-			canvas.setSize( zoomImage.getBounds().width, zoomImage.getBounds().height );
-			canvas.setBackgroundImage( zoomImage );
-			DisplayUtil.setWidgetAtCenter( canvas );
-			canvas.setVisible( true );
-			
+
+			canvasContainer.setSize( zoomImage.getBounds().width, zoomImage.getBounds().height );
+			canvasContainer.setBackgroundImage( zoomImage );
+			DisplayUtil.setWidgetAtCenter( canvasContainer );
+			canvasContainer.setVisible( true );
+
 			chalkAction.setEnabled( true );
+			chalkAction.setChecked( true );
+			chalkAction.run();
 			// show colorInfo panel
-			//colorAction.setChecked( true );
-			//colorAction.run();
+			// colorAction.setChecked( true );
+			// colorAction.run();
 		}
 	}
 
@@ -472,6 +512,12 @@ public class JZoomerWindow extends BasicWindow
 		newShell.setImage( SWTResourceManager.getImage( JZoomerWindow.class, "/icons/magnifier.png" ) );
 		newShell.setSize( currentWidth, currentHeight );
 		newShell.setMinimumSize( JZoomerConstant.WINDOW_MIN_WIDTH, JZoomerConstant.WINDOW_MIN_HEIGHT );
+		// newShell.setBackground( backgroundColor );
+
+		// TODO implement this monitor in shell
+		// when mouse move in or move, stop monitor
+		// newShell.addMouseMoveListener( toggleMonitorAction );
+		// newShell.addMouseTrackListener( toggleMonitorAction );
 
 	}
 
@@ -527,14 +573,14 @@ public class JZoomerWindow extends BasicWindow
 		this.currentZoomRate = currentZoomRate;
 	}
 
-	/**
-	 * @return the canvas
-	 */
-	public Canvas getCanvas()
-	{
-
-		return canvas;
-	}
+	// /**
+	// * @return the canvas
+	// */
+	// public Canvas getCanvas()
+	// {
+	//
+	// return canvas;
+	// }
 
 	/**
 	 * @return the timer
@@ -550,6 +596,7 @@ public class JZoomerWindow extends BasicWindow
 
 		trayItem.setToolTipText( getMessage( "window.tray.tooltip", getCurrentZoomRate() + "" ) );
 		container.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
+		canvasContainer.setToolTipText( getMessage( "window.canvas.tooltip", getCurrentZoomRate() + "" ) );
 	}
 
 	/**
@@ -612,7 +659,7 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	public Tray getTray()
 	{
-	
+
 		return tray;
 	}
 
@@ -621,7 +668,7 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	public TrackerAction getTrackerAction()
 	{
-	
+
 		return trackerAction;
 	}
 
@@ -630,8 +677,17 @@ public class JZoomerWindow extends BasicWindow
 	 */
 	public ChalkAction getChalkAction()
 	{
-	
+
 		return chalkAction;
+	}
+
+	/**
+	 * @return the canvasContainer
+	 */
+	public ImageComposite getCanvasContainer()
+	{
+
+		return canvasContainer;
 	}
 
 }

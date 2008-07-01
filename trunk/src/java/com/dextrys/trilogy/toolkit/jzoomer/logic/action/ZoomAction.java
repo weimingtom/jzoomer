@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
+import com.dextrys.trilogy.toolkit.jzoomer.ui.ImageComposite;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.dextrys.trilogy.util.swt.ImageConvertor;
@@ -42,7 +43,9 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	private Image captureImg;
 	private int imagScaleType;
 
-	private static Canvas canvas;
+	private ImageComposite canvasContainer;
+	
+	//private static Canvas canvas;
 	private static Point zoomSize;
 
 	private static Image currentImage;
@@ -110,10 +113,10 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 		currentImage = window.getCurrentImage();
 		zoomImage = ImageUtil.getScaledImage( currentImage, rate );
 		zoomSize = new Point( zoomImage.getBounds().width, zoomImage.getBounds().height);
-		canvas.setSize( zoomSize.x, zoomSize.y );
-		canvas.getBackgroundImage().dispose();
-		canvas.setBackgroundImage( zoomImage );
-		DisplayUtil.setWidgetAtCenter( canvas );
+		canvasContainer.setSize( zoomSize.x, zoomSize.y );
+		canvasContainer.getBackgroundImage().dispose();
+		canvasContainer.setBackgroundImage( zoomImage );
+		DisplayUtil.setWidgetAtCenter( canvasContainer );
 	}
 	
 	private void doZoomIn()
@@ -226,11 +229,20 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 	}
 
 	/**
-	 * @param canvas the canvas to set
+	 * @param canvasContainer the canvasContainer to set
 	 */
-	public void setCanvas( Canvas canvas )
+	public void setCanvasContainer( ImageComposite canvasContainer )
 	{
 	
-		this.canvas = canvas;
+		this.canvasContainer = canvasContainer;
 	}
+
+//	/**
+//	 * @param canvas the canvas to set
+//	 */
+//	public void setCanvas( Canvas canvas )
+//	{
+//	
+//		this.canvas = canvas;
+//	}
 }

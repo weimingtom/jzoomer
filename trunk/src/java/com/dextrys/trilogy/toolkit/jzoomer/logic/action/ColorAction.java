@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.ToolTip;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
+import com.dextrys.trilogy.toolkit.jzoomer.ui.ImageComposite;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
@@ -30,9 +31,9 @@ import com.swtdesigner.SWTResourceManager;
 public class ColorAction extends BasicAction implements MouseListener, MouseMoveListener// ,
 // KeyListener
 {
-	private static final String Control = null;
 	private JZoomerWindow window;
-	private Canvas canvas;
+	//private Canvas canvas;
+	private ImageComposite canvasContainer;
 	private Robot robot;
 	private int r, g, b;
 	private boolean isHotKeyPressed, isStopped;;
@@ -66,13 +67,13 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 		if( isChecked() )
 		{
-			canvas.setCursor( JZoomerConstant.CURSOR_COLORPICKER );
-			canvas.setToolTipText( getMessage( "action.color.canvas.tooltip" ) );
+			canvasContainer.setCursor( JZoomerConstant.CURSOR_COLORPICKER );
+			canvasContainer.setToolTipText( getMessage( "action.color.canvas.tooltip" ) );
 			toggleColorPick( true );
 		} else
 		{
-			canvas.setCursor( JZoomerWindow.CURSOR_CROSS );
-			canvas.setToolTipText( "" );
+			canvasContainer.setCursor( JZoomerWindow.CURSOR_CROSS );
+			canvasContainer.setToolTipText( "" );
 			toggleColorPick( false );
 		}
 	}
@@ -215,11 +216,11 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	 * @param canvas
 	 *            the canvas to set
 	 */
-	public void setCanvas( Canvas canvas )
-	{
-
-		this.canvas = canvas;
-	}
+//	public void setCanvas( Canvas canvas )
+//	{
+//
+//		this.canvas = canvas;
+//	}
 
 	public void setColorInfoGroup( ColorInfoGroup colorInfoGroup )
 	{
@@ -235,5 +236,14 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	{
 
 		this.tooltip = tooltip;
+	}
+
+	/**
+	 * @param canvasContainer the canvasContainer to set
+	 */
+	public void setCanvasContainer( ImageComposite canvasContainer )
+	{
+	
+		this.canvasContainer = canvasContainer;
 	}
 }
