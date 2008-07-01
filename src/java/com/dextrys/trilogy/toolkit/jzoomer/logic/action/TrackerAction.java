@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tracker;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
+import com.dextrys.trilogy.toolkit.jzoomer.ui.ImageComposite;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
 import com.swtdesigner.ResourceManager;
 import com.swtdesigner.SWTResourceManager;
@@ -35,7 +36,8 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 	private JZoomerWindow window;
 	private Tracker tracker;
 	private Point point;
-	private Canvas canvas;
+	//private Canvas canvas;
+	private ImageComposite canvasContainer;
 
 	private DefaultToolTip tooltip;
 
@@ -43,23 +45,31 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 	 * @param canvas
 	 *            the canvas to set
 	 */
-	public void setCanvas( Canvas canvas )
+//	public void setCanvas( Canvas canvas )
+//	{
+//
+//		this.canvas = canvas;
+//		initTooltip();
+//	}
+	
+	private void initTooltip()
 	{
-
-		this.canvas = canvas;
 		if( tooltip == null )
 		{
-			tooltip = new DefaultToolTip( canvas );
+			tooltip = new DefaultToolTip( canvasContainer );
 			tooltip.deactivate();
 			tooltip.setHideOnMouseDown( true );
 		}
 	}
+	
+	
 
 	public TrackerAction( JZoomerWindow w )
 	{
 
 		super( AS_RADIO_BUTTON );
 		window = w;
+
 		setChecked( false );
 		setText( getMessage( "action.tracker.text" ) );
 		setToolTipText( getMessage("action.tracker.tooltip") );
@@ -70,11 +80,11 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 	{
 		if( isChecked() )
 		{
-			canvas.setCursor( JZoomerConstant.CURSOR_CROSS );
-			canvas.setToolTipText( getMessage( "action.tracker.tooltip" ) );
+			canvasContainer.setCursor( JZoomerConstant.CURSOR_CROSS );
+			canvasContainer.setToolTipText( getMessage( "action.tracker.tooltip" ) );
 		} else
 		{
-			canvas.setCursor( JZoomerConstant.CURSOR_CROSS );
+			canvasContainer.setCursor( JZoomerConstant.CURSOR_CROSS );
 		}
 	}
 
@@ -203,6 +213,16 @@ public class TrackerAction extends BasicAction implements MouseMoveListener, Mou
 			// }
 			// tooltip.hide();
 		}
+	}
+
+	/**
+	 * @param canvasContainer the canvasContainer to set
+	 */
+	public void setCanvasContainer( ImageComposite canvasContainer )
+	{
+	
+		this.canvasContainer = canvasContainer;
+		initTooltip();
 	}
 
 }

@@ -56,26 +56,56 @@ public class ToggleMonitorAction extends BasicAction implements MouseTrackListen
 		{
 			System.out.println( "mouse enter toggle off" );
 			window.toggleMonitor( false );
-			setEnabled( false );
+			//setEnabled( false );
 		}
 	}
 
 	public void mouseExit( MouseEvent e )
 	{
 
-		Point currentMousePoint = null;
-		Point compositeSize = null;
+		Point currentMousePoint = new Point(0,0);
+		Point compositeSize = window.getContainer().getSize();
 		Control c = ( Control ) e.getSource();
 		
-		if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
-		{// composite size
-			compositeSize = c.getSize();
+		if( e.getSource() == window.getShell() )
+		{
+			// System.out.println( "ToggleMonitorAction: mouse exit shell");
+			// currentMousePoint = new Point( e.x, e.y );
+		}
+		else if( e.getSource() == window.getContainer() )
+		{
+			System.out.println( "ToggleMonitorAction: mouse exit container");
+			// composite size
+			//compositeSize = c.getSize();
 			currentMousePoint = new Point( e.x, e.y );
-		}else
-		{//Canvas
-			compositeSize = c.getParent().getSize();
+		}
+		else if( e.getSource() == window.getCanvasContainer() )
+		{
+			System.out.println( "ToggleMonitorAction: mouse exit canvasContainer");
+			// canvas container
+			//compositeSize = c.getParent().getSize();
 			currentMousePoint = new Point( c.getLocation().x + e.x, c.getLocation().y + e.y );
 		}
+//		else if( e.getSource() == window.getCanvas() )
+//		{
+//			System.out.println( "ToggleMonitorAction: mouse exit canvas" );
+//			//Canvas
+//			compositeSize = c.getParent().getParent().getSize();
+//			currentMousePoint = new Point( 
+//					c.getParent().getLocation().x + c.getLocation().x + e.x, 
+//					c.getParent().getLocation().y + c.getLocation().y + e.y 
+//			);
+//		}
+		
+//		if( e.getSource() instanceof Composite && c.getParent() instanceof Shell )
+//		{// composite size
+//			compositeSize = c.getSize();
+//			currentMousePoint = new Point( e.x, e.y );
+//		}else
+//		{//Canvas
+//			compositeSize = c.getParent().getSize();
+//			currentMousePoint = new Point( c.getLocation().x + e.x, c.getLocation().y + e.y );
+//		}
 		
 		if( currentMousePoint.x > 0 && currentMousePoint.y > 0 && currentMousePoint.x < compositeSize.x && currentMousePoint.y < compositeSize.y )
 		{// mouse move in the composite
