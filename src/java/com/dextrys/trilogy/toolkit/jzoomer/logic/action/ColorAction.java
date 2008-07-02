@@ -21,7 +21,9 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolTip;
 import com.dextrys.trilogy.toolkit.jzoomer.base.BasicAction;
+import com.dextrys.trilogy.toolkit.jzoomer.base.BasicDialog;
 import com.dextrys.trilogy.toolkit.jzoomer.common.JZoomerConstant;
+import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoDialog;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ColorInfoGroup;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.ImageComposite;
 import com.dextrys.trilogy.toolkit.jzoomer.ui.JZoomerWindow;
@@ -32,12 +34,13 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 // KeyListener
 {
 	private JZoomerWindow window;
+	private ColorInfoDialog colorInfoDlg;
 	//private Canvas canvas;
 	private ImageComposite canvasContainer;
 	private Robot robot;
 	private int r, g, b;
 	private boolean isHotKeyPressed, isStopped;;
-	private ColorInfoGroup colorInfoGroup;
+	//private ColorInfoGroup colorInfoGroup;
 	private ToolTip tooltip;
 
 	private static Clipboard clipboard = new Clipboard( Display.getCurrent() );
@@ -62,14 +65,24 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		setImageDescriptor( ResourceManager.getImageDescriptor( ColorAction.class, "/icons/colorpicker.png" ) );
 	}
 
+	private void initColorInfoDialog()
+	{
+		colorInfoDlg = new ColorInfoDialog(window.getShell());
+	}
+	
 	public void run()
 	{
+		if( colorInfoDlg == null )
+		{
+			initColorInfoDialog();
+		}
 
 		if( isChecked() )
 		{
 			canvasContainer.setCursor( JZoomerConstant.CURSOR_COLORPICKER );
 			canvasContainer.setToolTipText( getMessage( "action.color.canvas.tooltip" ) );
 			toggleColorPick( true );
+			window.getShell().setActive();
 		} else
 		{
 			canvasContainer.setCursor( JZoomerWindow.CURSOR_CROSS );
@@ -83,7 +96,8 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 		// System.out.println( "pick up color" );
 		Color color = getCurrentMouseLocationColor();
-		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
+		colorInfoDlg.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
+		//colorInfoGroup.setColorInfo( SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() ) );
 		String cHtml = getColorHtml();
 
 		// save color info into clipboard
@@ -99,8 +113,8 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 	public String getColorHtml()
 	{
-
-		return colorInfoGroup.getColorHtml();
+		return colorInfoDlg.getColorHtml();
+		//return colorInfoGroup.getColorHtml();
 	}
 
 	private Color getCurrentMouseLocationColor()
@@ -123,7 +137,9 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 		g = color.getGreen();
 		b = color.getBlue();
 
-		colorInfoGroup.setColorInfo( SWTResourceManager.getColor( r, g, b ) );
+		//colorInfoGroup.setColorInfo( SWTResourceManager.getColor( r, g, b ) );
+		
+		colorInfoDlg.setColorInfo( SWTResourceManager.getColor( r, g, b ) );
 	}
 
 	public void mouseDoubleClick( MouseEvent e )
@@ -195,7 +211,9 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 
 		isHotKeyPressed = flag;
 		isStopped = !flag;
-		colorInfoGroup.setVisible( flag );
+		//colorInfoGroup.setVisible( flag );
+		colorInfoDlg.showDialog( BasicDialog.AT_WINDOW_LEFT );
+		colorInfoDlg.setVisible( flag );
 	}
 
 	public void keyReleased( KeyEvent e )
@@ -222,11 +240,11 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 //		this.canvas = canvas;
 //	}
 
-	public void setColorInfoGroup( ColorInfoGroup colorInfoGroup )
-	{
-
-		this.colorInfoGroup = colorInfoGroup;
-	}
+	// public void setColorInfoGroup( ColorInfoGroup colorInfoGroup )
+	// {
+	//
+	// this.colorInfoGroup = colorInfoGroup;
+	//	}
 
 	/**
 	 * @param tooltip
@@ -245,5 +263,14 @@ public class ColorAction extends BasicAction implements MouseListener, MouseMove
 	{
 	
 		this.canvasContainer = canvasContainer;
+	}
+
+	/**
+	 * @param colorInfoDlg the colorInfoDlg to set
+	 */
+	public void setColorInfoDlg( ColorInfoDialog colorInfoDlg )
+	{
+	
+		this.colorInfoDlg = colorInfoDlg;
 	}
 }
