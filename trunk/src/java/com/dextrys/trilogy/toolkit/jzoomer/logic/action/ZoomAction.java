@@ -5,6 +5,7 @@
 package com.dextrys.trilogy.toolkit.jzoomer.logic.action;
 
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -28,6 +29,7 @@ import com.dextrys.trilogy.util.swt.DisplayUtil;
 import com.dextrys.trilogy.util.swt.ImageConvertor;
 import com.dextrys.trilogy.util.swt.ImageUtil;
 import com.swtdesigner.ResourceManager;
+import com.swtdesigner.SWTResourceManager;
 
 public class ZoomAction extends BasicAction implements MouseWheelListener, ActionListener
 {
@@ -202,6 +204,12 @@ public class ZoomAction extends BasicAction implements MouseWheelListener, Actio
 						mouseY - ( captureHeight / 2 ), captureWidth, captureHeight );
 
 				bi = robot.createScreenCapture( sampleRectangle );
+				if( window.getColorAction().isChecked() )
+				{
+					Color color = robot.getPixelColor( mouseX, mouseY );
+					org.eclipse.swt.graphics.Color c = SWTResourceManager.getColor( color.getRed(), color.getGreen(), color.getBlue() );
+					window.getColorInfoDlg().setColorInfo( c );
+				}
 				
 				if( rate == 1 || rate == -1 )
 				{

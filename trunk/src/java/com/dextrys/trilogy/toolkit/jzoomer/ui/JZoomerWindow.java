@@ -75,7 +75,8 @@ public class JZoomerWindow extends BasicWindow
 	private Tray tray;
 	private TrayItem trayItem;
 	private Composite container;
-	private ColorInfoGroup colorInfoGroup;
+	private ColorInfoDialog colorInfoDlg;
+	//private ColorInfoGroup colorInfoGroup;
 	private ImageComposite canvasContainer;
 	//private Canvas canvas;
 	private Timer timer;
@@ -183,14 +184,18 @@ public class JZoomerWindow extends BasicWindow
 
 		} );
 
-		colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
-		// setTransparent( colorInfoGroup, 125 );
-		colorInfoGroup.setVisible( false );
-		// implement mouse drag
-		colorInfoGroup.addMouseMoveListener( mouseAction );
-		colorInfoGroup.addMouseListener( mouseAction );
+		colorInfoDlg = new ColorInfoDialog( getShell() );
+		colorAction.setColorInfoDlg( colorInfoDlg );
+		
+
+		// colorInfoGroup = new ColorInfoGroup( container, SWT.NONE );
+		// // setTransparent( colorInfoGroup, 125 );
+		// colorInfoGroup.setVisible( false );
+		// // implement mouse drag
+		// colorInfoGroup.addMouseMoveListener( mouseAction );
+		// colorInfoGroup.addMouseListener( mouseAction );
 		// colorAction.setCanvas( canvas );
-		colorAction.setColorInfoGroup( colorInfoGroup );
+		//colorAction.setColorInfoGroup( colorInfoGroup );
 
 		canvasContainer = new ImageComposite( container, SWT.NONE );
 		canvasContainer.setBackgroundMode( SWT.INHERIT_FORCE );
@@ -343,8 +348,8 @@ public class JZoomerWindow extends BasicWindow
 			canvasContainer.setVisible( true );
 
 			chalkAction.setEnabled( true );
-			chalkAction.setChecked( true );
-			chalkAction.run();
+			//chalkAction.setChecked( true );
+			//chalkAction.run();
 			// show colorInfo panel
 			// colorAction.setChecked( true );
 			// colorAction.run();
@@ -688,6 +693,24 @@ public class JZoomerWindow extends BasicWindow
 	{
 
 		return canvasContainer;
+	}
+
+	/**
+	 * @return the colorAction
+	 */
+	public ColorAction getColorAction()
+	{
+	
+		return colorAction;
+	}
+
+	/**
+	 * @return the colorInfoDlg
+	 */
+	public ColorInfoDialog getColorInfoDlg()
+	{
+	
+		return colorInfoDlg;
 	}
 
 }
