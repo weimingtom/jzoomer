@@ -12,7 +12,6 @@ import com.dextrys.trilogy.util.SourceBundlesReader;
 public class BasicDialog extends Dialog
 {
 	private static SourceBundlesReader reader;
-	Text aboutText;
 
 	public BasicDialog(Shell parent)
 	{
